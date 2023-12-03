@@ -57,7 +57,10 @@ def processing_thread():
         key_pressed = cv2.waitKey(1) & 0xFF
         
         if key_pressed == ord('p'):
-            print("button pressed")
+            cv2.imshow("Previous", go_visual.previous())
+            
+        if key_pressed == ord('n'):
+            cv2.imshow("Next", go_visual.next())
 
         if key_pressed == ord('q'):
             Process = False
@@ -87,7 +90,7 @@ while cap.isOpened():
     ########################## YA3NI LE FLUX DE VIDEO QUI DOIT ETRE STREAMé
     ProcessFrame = copy.deepcopy(frame)
     
-    cv2.imshow('Video Stream', frame)
+    # cv2.imshow('Video Stream', frame)
     
     key_pressed = cv2.waitKey(1) & 0xFF
     
