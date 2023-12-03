@@ -5,8 +5,10 @@ import cv2
 class GoVisual:
     """
     class GoVisual: 
-    creates a board given an sgf file provided by the GoSgf class
-    can navigate through the game using methods such as previous or next
+    creates a go game visual representation given a Sente game provided by the Sente class
+    can navigate through the game using methods such as previous or next while managing the game's logic
+    The same instance of Sente is used in the GoGame class, which means it gets automatically updated each move 
+    and the attributes of the class get updated via the initialize_param function
     """
 
     def __init__(self, game):
@@ -15,8 +17,8 @@ class GoVisual:
 
         Parameters:
         -----------
-        sgf_url : str
-            directory of the sgf file
+        game : Sente
+            the game instance created by Sente and updated by GoGame 
         """
         self.game = game
         self.moves = self.get_moves()
@@ -27,6 +29,15 @@ class GoVisual:
         self.deleted_moves = []
 
     def get_stones(self, moves):
+        """
+        Count and collect positions of the stones on the board.
+
+        Parameters:
+        -----------
+        moves : list
+            A Sequence of moves provided by Sente
+
+        """
         self.nb_black_stones = 0
         self.nb_white_stones = 0
         self.black_stones = []
@@ -44,6 +55,24 @@ class GoVisual:
     
     
     def update_moves(self, board, moves):
+        """
+        Filter out captured stones and illegal moves that are not present on the Sente board
+        since the sequence contains all the moves while the board contains only the moves that should be showed
+
+        Parameters:
+        -----------
+        board : numpy.ndarray
+            19x19x2, representing the current state of the game board.
+
+        moves : list
+            A Sequence of moves provided by Sente
+
+        Returns:
+        -----------
+        list
+            List of valid moves present on the board.
+
+        """
         # Filter out moves that are not present on the board
         valid_moves = []
 
@@ -56,36 +85,52 @@ class GoVisual:
     
 
     def initialize_param(self, nb_moves=0):
-       
+        """
+        Initialize parameters of the GoBoard based on the specified number of moves.
+        The method should keep track of all the "lost" or deleted moves while using the self.previous method 
+        and ensure we're at the right current number of moves.
+        The use of both "moves" and "board" is necessary: moves contains the order of stones, which is crucial since we want to navigate through the game
+        while board omit the stones that shouldn't be showed (captured, illegal stones).
+
+        Parameters:
+        -----------
+        nb_moves : int, optional
+            Number of moves to initialize the board with. Default is 0.
+            Can be positive (used in self.next()) or negative (self.previous()).
+
+    """
         self.get_stones(self.update_moves(self.game.numpy(["black_stones", "white_stones"]), self.get_moves()))
 
         if nb_moves<0:
-            # if nb_moves == -len(self.game.get_sequence())+1:
-            #     self.deleted_moves = self.moves[nb_moves:] + self.deleted_moves
-            #     self.game.step_up(-nb_moves)
-            #     self.moves = self.game.get_sequence()
-            #     self.board = self.game.numpy(["black_stones", "white_stones"])
-            #     self.get_stones(self.update_moves(self.board, self.game.get_sequence()))
- 
+            # Update deleted moves
             self.deleted_moves = self.moves[nb_moves:] + self.deleted_moves
+            
+            # Filter repeated deleted moves (happens when using initial position)
             self.unique_deleted_moves = []
+            
             for move in self.deleted_moves:
                 if move not in self.unique_deleted_moves:
                     self.unique_deleted_moves.append(move)
-
+            
+            # Delete the moves we don't want to show
             self.game.step_up(-nb_moves)
+
+            # Update the parameters
             self.moves = self.get_moves()
             self.board = self.game.numpy(["black_stones", "white_stones"])
+
+            # Get the list of stones based on the filtered moves
             self.get_stones(self.update_moves(self.board, self.get_moves()))
 
         elif nb_moves>0:
+
             if len(self.deleted_moves) != 0 :
 
-                while nb_moves > 0:
-                    move = self.deleted_moves.pop(0)
+                # Add the desired number of deleted moves to the game to rewind the game state
+                for move in self.deleted_moves[:nb_moves]:
                     x, y, color = move.get_x()+1, move.get_y()+1, move.get_stone().name
                     self.game.play(x,y)
-                    nb_moves -= 1
+                    self.deleted_moves.pop(0)
 
                 self.board = self.game.numpy(["black_stones", "white_stones"])
                 self.moves = self.get_moves()
@@ -106,7 +151,7 @@ class GoVisual:
 
     def drawBoard(self):
         """
-        Draw the board up to a certain number of moves
+        Draw the board of the Go game
 
         Parameters:
         -----------
@@ -205,7 +250,7 @@ class GoVisual:
         """
         if self.last_move[2].get_stone().name == 'BLACK':
             return 'WHITE' 
-        elif self.last_move[2].get_stone().name == 'BLACK' or self.current_number_of_moves == 0:
+        elif self.last_move[2].get_stone().name == 'WHITE' or self.current_number_of_moves == 0:
             return 'BLACK'
         
     def previous(self):
@@ -233,9 +278,8 @@ class GoVisual:
         return self.drawBoard()
 
 
-
-
 # # %%
+# #Example of usage
 # import sente
 
 # g = sente.Game()
@@ -249,8 +293,6 @@ class GoVisual:
 # g.play(17,5)
 # g.play(4,3)
 
-
-
 # # %%
 # board = GoVisual(g)
 # res = board.final_position()
@@ -260,50 +302,3 @@ class GoVisual:
 
 
 
-# # %%
-# previous = board.previous()
-# cv2.imshow("result", previous)
-
-# cv2.waitKey(0)
-
-
-# cv2.destroyAllWindows()
-
-
-
-# #%%
-# next = board.next()
-# cv2.imshow("result", next)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-
-
-# #%%
-# next = board.next()
-# cv2.imshow("result", next)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-
-# # %%
-# init = board.initial_position()
-# cv2.imshow("result", init)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-
-# # %%
-# next = board.next()
-# cv2.imshow("result", next)
-
-
-
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-# # %%
-# res = board.final_position()
-# cv2.imshow("result", res)
-# cv2.waitKey(0)
-
-# cv2.destroyAllWindows()
-# # %%
-
-# %%
