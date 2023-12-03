@@ -29,7 +29,7 @@ class GoGame:
     def main_loop(self, frame):
         self.frame = frame
         self.board_detect.process_frame(frame)
-        self.define_new_move()
+        # self.define_new_move()
         
         return self.go_visual.final_position(), self.get_sgf()
     
