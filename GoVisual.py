@@ -24,7 +24,6 @@ class GoVisual:
         self.moves = self.get_moves()
         self.total_number_of_moves  = len(self.moves)
         self.board_size = 19
-        self.current_number_of_moves = self.total_number_of_moves
         self.last_move = None
         self.deleted_moves = []
 
