@@ -12,7 +12,7 @@ class GoVisual:
     """
 
     def __init__(self, game):
-        """"
+        """
         Constructor method for GoBoard.
 
         Parameters:
