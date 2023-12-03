@@ -13,17 +13,17 @@ class GoGame:
 
 
     def initialize_game(self, frame, current_player="BLACK"): #current_player = "BLACK" or "WHITE"
-        # self.moves = []
-        # self.current_player = current_player
+        self.moves = []
+        self.current_player = current_player
         
-        # self.frame = frame
-        # self.board_detect.process_frame(frame)
-        # self.populate_game()
-        # if not self.game.get_active_player().name == current_player:
-        #     self.game.pss()
+        self.frame = frame
+        self.board_detect.process_frame(frame)
+        self.populate_game()
+        if not self.game.get_active_player().name == current_player:
+            self.game.pss()
 
-        # return self.go_visual.final_position()
-        return self.main_loop(frame)
+        return self.go_visual.final_position(), self.get_sgf()
+        # return self.main_loop(frame)
     
     
     def main_loop(self, frame):
