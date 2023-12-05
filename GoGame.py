@@ -3,8 +3,43 @@ import sente
 
 
 class GoGame:
+    """
+    GoGame is the class responsible for managing the game, comparing frames and finding the newly played move
+    """
 
     def __init__(self, game, board_detect, go_visual):
+        """
+        Constructor method for the GoGame class.
+
+        Parameters:
+        -----------
+        game : Sente
+            The game instance associated with the GoGame.
+
+        board_detect : GoBoard
+            The GoBoard instance responsible for board detection.
+
+        go_visual : GoVisual
+            The GoVisual instance for visualizing the Go board.
+
+        Attributes:
+        -----------
+        moves : list
+            List to store the moves made in the game.
+
+        board_detect : GoBoard
+            GoBoard instance responsible for board detection.
+
+        go_visual : GoVisual
+            GoVisual instance for visualizing the Go board.
+
+        game : Sente
+            Game instance associated with the GoGame.
+
+        current_player : None
+            Placeholder for the current player in the game.
+
+        """
         self.moves = []
         self.board_detect = board_detect
         self.go_visual = go_visual

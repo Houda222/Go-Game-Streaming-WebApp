@@ -1,3 +1,4 @@
+
 import numpy as np
 import cv2
 
@@ -26,6 +27,7 @@ class GoVisual:
         self.board_size = 19
         self.last_move = None
         self.deleted_moves = []
+        self.current_nb_of_moves = self.total_number_of_moves
 
     def get_stones(self, moves):
         """
@@ -99,7 +101,7 @@ class GoVisual:
 
     """
         self.get_stones(self.update_moves(self.game.numpy(["black_stones", "white_stones"]), self.get_moves()))
-
+        
         if nb_moves<0:
             # Update deleted moves
             self.deleted_moves = self.moves[nb_moves:] + self.deleted_moves
@@ -134,12 +136,15 @@ class GoVisual:
                 self.board = self.game.numpy(["black_stones", "white_stones"])
                 self.moves = self.get_moves()
                 self.get_stones(self.update_moves(self.board, self.moves))
-
+        
         if self.get_moves() != []:
             self.last_move = self.get_moves()[-1]
     
     
     def get_moves(self):
+        """
+        Remove moves where no move is played
+        """
         moves = []
         for move in self.game.get_sequence():
             if move.get_x() == 19 and move.get_y() == 19:
@@ -222,6 +227,7 @@ class GoVisual:
         numpy array
             The resulted board drawn with only the first played move
         """
+        self.current_nb_of_moves = 1
         self.initialize_param(-len(self.get_moves())+1)
         return self.drawBoard()
 
@@ -235,6 +241,7 @@ class GoVisual:
             The resulted board drawn with all the played moves 
         """
         nb_moves = len(self.moves) + len(self.deleted_moves)
+        self.current_nb_of_moves = nb_moves
         self.initialize_param(nb_moves)
         return self.drawBoard()
 
@@ -261,6 +268,7 @@ class GoVisual:
         numpy array
             The board one move before the displayed position
         """
+        self.current_nb_of_moves -=1
         self.initialize_param(-1)
         return self.drawBoard()
 
@@ -273,9 +281,20 @@ class GoVisual:
         numpy array
             The board one move after the displayed position
         """
+        self.current_nb_of_moves +=1
         self.initialize_param(1)
         return self.drawBoard()
 
+    def current_position(self):
+        """
+        Display the current position
+
+        Returns:
+        --------
+        numpy array
+            The board one move after the displayed position
+        """
+        return self.drawBoard()
 
 # # %%
 # #Example of usage
@@ -301,3 +320,5 @@ class GoVisual:
 
 
 
+
+# %%
