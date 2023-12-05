@@ -116,6 +116,13 @@ class GoBoard:
         # Check if the correct number of lines is detected
         if len(cluster_1) != 19 or len(cluster_2) != 19:
             raise Exception(f"Incorrect number of lines was detected: {len(cluster_1)} vertical lines and {len(cluster_2)} horizontal lines")
+        
+        # img = np.copy(self.transformed_image)
+        # draw_lines(cluster_1, self.transformed_image)
+        # # img = np.copy(self.transformed_image)
+        # draw_lines(cluster_2, self.transformed_image)
+        # # imshow_(img)
+        
 
         # Detect intersections between vertical and horizontal lines
         intersections = detect_intersections(cluster_1, cluster_2, self.transformed_image)
