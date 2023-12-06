@@ -57,7 +57,7 @@ class GoGame:
         if not self.game.get_active_player().name == current_player:
             self.game.pss()
 
-        return self.go_visual.final_position(), self.get_sgf()
+        return self.go_visual.current_position(), self.get_sgf()
         # return self.main_loop(frame)
     
     
@@ -66,7 +66,7 @@ class GoGame:
         self.board_detect.process_frame(frame)
         # self.define_new_move()
         
-        return self.go_visual.final_position(), self.get_sgf()
+        return self.go_visual.current_position(), self.get_sgf()
     
     def play_move(self, x, y, stone_color):
         color = "white" if stone_color == 2 else "black"

@@ -22,7 +22,7 @@ def processing_thread():
                 else:
                     
                 ############ WA SMA3NI MZZZZN DB.  game_plot HYA LA VARIABLE LLI FIHA L'IMAGE DESSINé
-                ############ B LE CODE DYAL HOUDA;
+                ############ B LE CODE DYAL GoVisual;
                 ############ O sgf_filename HOWA LE NOM DYAL LE FICHER SGF LLI T ENREGISTRA 
                 ############ QUI CORRESPOND A game_plot
                     game_plot, sgf_text = game.main_loop(ProcessFrame)
