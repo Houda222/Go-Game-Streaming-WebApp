@@ -1,4 +1,4 @@
-
+#%%
 import numpy as np
 import cv2
 
@@ -28,6 +28,7 @@ class GoVisual:
         self.last_move = None
         self.deleted_moves = []
         self.current_nb_of_moves = self.total_number_of_moves
+        self.step = 0
 
     def get_stones(self, moves):
         """
@@ -235,9 +236,7 @@ class GoVisual:
         numpy array
             The resulted board drawn with only the first played move
         """
-        self.current_nb_of_moves = 1
-        self.initialize_param(-len(self.get_moves())+1)
-        return self.drawBoard()
+        self.step = -len(self.get_moves())+1
 
     def final_position(self):
         """
@@ -249,9 +248,7 @@ class GoVisual:
             The resulted board drawn with all the played moves 
         """
         nb_moves = len(self.moves) + len(self.deleted_moves)
-        self.current_nb_of_moves = nb_moves
-        self.initialize_param(nb_moves)
-        return self.drawBoard()
+        self.step = nb_moves
 
     def current_turn(self):
         """
@@ -276,9 +273,10 @@ class GoVisual:
         numpy array
             The board one move before the displayed position
         """
-        self.current_nb_of_moves -=1
-        self.initialize_param(-1)
-        return self.drawBoard()
+        self.current_nb_of_moves -= 1
+        self.step = -1
+        # self.initialize_param(-1)
+        # return self.drawBoard()
 
     def next(self):
         """
@@ -289,9 +287,10 @@ class GoVisual:
         numpy array
             The board one move after the displayed position
         """
+        self.step = 1
         self.current_nb_of_moves +=1
-        self.initialize_param(1)
-        return self.drawBoard()
+        # self.initialize_param(1)
+        # return self.drawBoard()
 
     def current_position(self):
         """
@@ -302,6 +301,7 @@ class GoVisual:
         numpy array
             The board one move after the displayed position
         """
+        self.initialize_param(self.step)
         return self.drawBoard()
 
 # # %%
@@ -319,14 +319,36 @@ class GoVisual:
 # g.play(17,5)
 # g.play(4,3)
 
+
 # # %%
 # board = GoVisual(g)
-# res = board.final_position()
+# res = board.current_position()
 # cv2.imshow("result", res)
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
 
+# # %%
+# board.previous()
 
 
 
-# %%
+# # %%
+# res = board.current_position()
+# cv2.imshow("result", res)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+# # %%
+# board.next()
+
+
+# # %%
+# res = board.current_position()
+# cv2.imshow("result", res)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+# # %%
+# board.final_position()
+
+# # %%
+# board.initial_position()
+# # %%
