@@ -528,7 +528,6 @@ def lines_detection(model_results, perspective_matrix):
     all_intersections = all_intersections[(all_intersections[:, 0:2] >= 0).all(axis=1) & (all_intersections[:, 0:2] <= 600).all(axis=1)]
 
 
-
     all_intersections = all_intersections[all_intersections[:, 0].argsort()]
 
     all_intersections_x = all_intersections[:,0].reshape((-1, 1))
@@ -723,6 +722,30 @@ def get_corners(results):
     return np.concatenate((upper, lower)).astype(dtype=np.float32)
 
 def get_key_points(results, class_, perspective_matrix, output_edge=600):
+    """
+    Extract and transform key points from object detection results.
+
+    Parameters:
+    -----------
+    results : object
+        Object containing detection results, typically from an object detection model.
+
+    class_ : int
+        Class index for the desired key points.
+
+    perspective_matrix : numpy.ndarray
+        Perspective transformation matrix used to transform key points.
+
+    output_edge : int, optional
+        Maximum value for the transformed key points' coordinates. Default is 600.
+
+    Returns:
+    -----------
+    numpy.ndarray
+        Transformed key points within the specified output edge.
+
+    """
+    # Extract raw key points from the detection results for the specified class
     key_points = results[0].boxes.xywh[results[0].boxes.cls == class_]
 
     if not key_points is None:
@@ -735,6 +758,23 @@ def get_key_points(results, class_, perspective_matrix, output_edge=600):
 
 
 def add_lines_in_the_edges(lines, type):
+    """
+    Add missing lines at the edges based on the specified line type.
+
+    Parameters:
+    -----------
+    lines : numpy.ndarray
+        Array of lines represented by their endpoints.
+
+    type : str
+        Type of lines to be added ('vertical' or 'horizontal').
+
+    Returns:
+    -----------
+    numpy.ndarray
+        Array of lines with potentially added lines at the edges.
+
+    """
     mean_distance = average_distance(lines)
     # print(mean_distance)
 
@@ -798,13 +838,58 @@ def add_lines_in_the_edges(lines, type):
     
     
 def line_distance(line1, line2):
-   return (np.linalg.norm(line1[:2]-line2[:2]) + np.linalg.norm(line1[2:]-line2[2:])) / 2
+    """
+    Calculate the average Euclidean distance between two lines.
+
+    Parameters:
+    -----------
+    line1 : numpy.ndarray
+        Array representing the endpoints of the first line.
+
+    line2 : numpy.ndarray
+        Array representing the endpoints of the second line.
+
+    Returns:
+    -----------
+    float
+        Average Euclidean distance between the two lines.
+
+    """
+    return (np.linalg.norm(line1[:2]-line2[:2]) + np.linalg.norm(line1[2:]-line2[2:])) / 2
 
 
 def calculate_distances(lines):
+    """
+    Calculate the distances between consecutive pairs of lines.
+
+    Parameters:
+    -----------
+    lines : list
+        List of arrays, each representing the endpoints of a line segment.
+
+    Returns:
+    -----------
+    list
+        List of distances between consecutive pairs of lines.
+
+    """
     return [line_distance(lines[i + 1], lines[i]) for i in range(len(lines) - 1)]
 
 def average_distance(lines):
+    """
+    Calculate the average distance between consecutive pairs of lines.
+
+    Parameters:
+    -----------
+    lines : list
+        List of arrays, each representing the endpoints of a line segment.
+
+    Returns:
+    -----------
+    float
+        Average distance between consecutive pairs of lines.
+
+    """
     distances = [line_distance(lines[i + 1], lines[i]) for i in range(len(lines) - 1)]
     mean_distance = np.average(distances)
     return mean_distance

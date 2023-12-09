@@ -49,6 +49,7 @@ def processing_thread():
                     game_plot = game.initialize_game(ProcessFrame)
                     initialized = True
                 else:
+                    # game_plot, sgf_text = game.main_loop(ProcessFrame)
                     if not game_plot_modified:
                         game_plot = game.main_loop(ProcessFrame) #je n'oublie pas le txt
 
@@ -73,8 +74,9 @@ def processing_thread():
                     # elif affichage == "premier":
                     #     game_plot = game_plot.initial_position()
                 # game_plot, sgf_filename = show_board(model, ProcessFrame)
-                
                 # cv2.imshow("master", game_plot)
+                # cv2.imshow("annotated", game.board_detect.annotated_frame)
+                # cv2.imshow("transformed", game.board_detect.transformed_image)
                 
                 
             except Exception as e:
