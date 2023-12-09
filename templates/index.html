@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename = 'styles.css') }}">
+    <!--<script  rel="stylesheet" type="text/css" src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>    <meta charset="UTF-8">-->>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container-fluid text-center bg custom-fond">
+        <div class="row text-danger">
+            <div class="col-5 custom-fond"> 
+                <a href = "{{ url_for('sommaire') }}"><button class="btn bg custom-button btn-grand">
+                    Retour
+                </button></a>
+            </div>
+            <div class="col-2"> 
+                <h1><u><b>Parties en cours</b></u></h1>
+            </div>
+            <div class="col-5 custom-color">        
+                <img src="{{ url_for('static', filename='Logo-Tanuki_bleu_ciel.png') }}" class="logo logo-Tenuki" alt="Logo de l'association" id="logo">
+            </div>
+        </div>
+    </div>
+    <form method="POST" action="/" id="myForm">
+    <button type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</button>
+    <button type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
+</form>
+
+    <form method="POST" action="/" id="move">
+        <button type="submit" id="start-button" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   premier;</button>     
+        <button type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   precedent;</button>     
+        <button type="submit" id="start-button2" name="psw2" value="4" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   suivant;</button>     
+        <button type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   dernier;</button>     
+        
+    </form>
+
+
+    
+    <script>
+        $(document).ready(function() {
+            $("#myForm button").click(function() {
+                // Désactiver tous les boutons à l'intérieur du formulaire
+                $("#myForm button").prop("disabled", true);
+                
+                // Activer le bouton cliqué
+                $(this).prop("disabled", false);
+            });
+        });
+    </script>
+    <div id="video-container">
+        <img id="camera-feed" src="{{ url_for('video_feed') }}" width="50%"/>
+    </div>
+    
+    <div id="message">
+        {{ message }}
+    </div>
+
+    <div id="image">
+        <img id="image" src="" width="50%" /> <!-- Ajoutez une balise img avec un ID -->
+    </div>   
+
+    <script>
+        function updateMessage() {
+            $.get('/update', function(data) {
+                // Mettre à jour le contenu de #message avec le nouveau message
+                $('#message').text(data.message);
+                $('#image img').attr('src', 'data:image/jpeg;base64,' + data.image);
+                
+            });
+        }
+    
+        // Mettre à jour le message toutes les 3 secondes (ajustez selon vos besoins)
+        setInterval(updateMessage, 3000);
+    </script>
+    <!--
+    
+    
+        <script src="{{ url_for('static',filename = 'script.js') }}"></script>
+
+-->
+
+   
+
+  
+</body>
+</html>
+

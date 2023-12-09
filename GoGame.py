@@ -2,6 +2,7 @@ from GoVisual import *
 import sente
 
 
+
 class GoGame:
 
     def __init__(self, game, board_detect, go_visual):
@@ -31,7 +32,7 @@ class GoGame:
         self.board_detect.process_frame(frame)
         self.define_new_move()
         
-        return self.go_visual.final_position(), self.get_sgf()
+        return self.go_visual.final_position()
     
     def play_move(self, x, y, stone_color):
         color = "white" if stone_color == 2 else "black"

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Historique</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename = 'styles.css') }}">
+   
+</head> 
+<body>
+    <script>
+    var tab_parties = [];
+    var tab_date = [];
+    var montant = 0;
+    </script>
+    <div class="container-fluid text-center bg custom-fond">
+        <div class="row text-danger">
+            <div class="col-5 custom-fond"> 
+                <a href = "{{ url_for('sommaire') }}"><button class="btn bg custom-button btn-grand">
+                    Retour
+                </button></a>
+            </div>
+            <div class="col-2"> 
+                <h1><u><b>Historique</b></u></h1>
+            </div>
+            <div class="col-5 custom-color">        
+                <img src="{{ url_for('static', filename='Logo-Tanuki_bleu_ciel.png') }}" class="logo logo-Tenuki" alt="Logo de l'association" id="logo">
+            </div>
+        </div>
+    </div>
+    <div class="container-md text-center bg custom-fond">
+        <div class="row">
+            <h2>Parties disponibles : 
+                <script>document.createTextNode(tab_parties.length)</script>
+            </h2>
+            <button onclick="actualiser();">
+                Actualiser
+            </button></br>   
+            <br>
+        </div>
+        <div class="row">
+            <table id = "historique">
+                <thead>
+                    <tr>
+                        <th colspan="5"></th>
+                    </tr>                
+                </thead>
+                <tbody>               
+                    <tr>
+                        <td>Date de réalisation</td>                    
+                        <td>Joueur 1</td>
+                        <td>Joueur 2</td>
+                        <td>Description</td>
+                        <td>Accès</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    <script {{ url_for('static',filename = 'historiquejs.js') }}></script>
+
+</body>
+</html>
