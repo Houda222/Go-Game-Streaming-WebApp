@@ -99,7 +99,10 @@ class GoVisual:
             Number of moves to initialize the board with. Default is 0.
             Can be positive (used in self.next()) or negative (self.previous()).
 
-    """
+        Returns:
+        -----------
+            None
+        """
         self.get_stones(self.update_moves(self.game.numpy(["black_stones", "white_stones"]), self.get_moves()))
         
         if nb_moves<0:
@@ -143,7 +146,12 @@ class GoVisual:
     
     def get_moves(self):
         """
-        Remove moves where no move is played
+        Remove pass move; when we use game.pss(), a move named "u19" is added to the sequence. 
+
+        Returns:
+        --------
+        moves: List
+            Cleaned sequence
         """
         moves = []
         for move in self.game.get_sequence():

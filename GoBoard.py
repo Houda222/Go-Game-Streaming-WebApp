@@ -116,22 +116,15 @@ class GoBoard:
         # Check if the correct number of lines is detected
         if len(cluster_1) != 19 or len(cluster_2) != 19:
             raise Exception(f"Incorrect number of lines was detected: {len(cluster_1)} vertical lines and {len(cluster_2)} horizontal lines")
-        
-        # img = np.copy(self.transformed_image)
-        # draw_lines(cluster_1, self.transformed_image)
-        # # img = np.copy(self.transformed_image)
-        # draw_lines(cluster_2, self.transformed_image)
-        # # imshow_(img)
-        
 
         # Detect intersections between vertical and horizontal lines
         intersections = detect_intersections(cluster_1, cluster_2, self.transformed_image)
 
         # Check if any intersections were found
         if len(intersections) == 0:
-            raise Exception(">>>>>No intersections were found!")
+            raise Exception("No intersections were found!")
         if len(intersections) != 361:
-            print(">>>>>Not all intersections were found")
+            print("Not all intersections were found!")
 
         # Assign stones to intersections
         self.assign_stones(white_stones, black_stones, intersections)
@@ -158,37 +151,51 @@ class GoBoard:
         
         for stone in white_stones_transf:
             
+            # Draw the position of the stone for testing 
             cv2.circle(self.transformed_image, np.array(stone).astype(dtype=np.int32), 3, (0, 0, 255), 2)
             
-            nearest_corner = None
-            closest_distance = 100000
-            for inter in transformed_intersections:
-                distance = math.dist(inter, stone)
-                if distance < closest_distance:
-                    nearest_corner = tuple(inter)
-                    closest_distance = distance
-            # cv2.circle(self.transformed_image, np.array(nearest_corner).astype(dtype=np.int32), 3, (0, 255, 0), 2)
-            # print("W", stone, self.map[nearest_corner])
+            nearest_corner = self.find_nearest_corner(transformed_intersections, stone)
             self.state[self.map[nearest_corner][1], self.map[nearest_corner][0], 1] = 1
+
+            # Draw the distance between the center of the stones and the intersection it was assigned to for testing
             cv2.line(self.transformed_image, (int(stone[0]), int(stone[1])), nearest_corner, (0, 255, 255), 2)
-            # cv2.putText(self.transformed_image, f"{(self.map[nearest_corner])}", nearest_corner, fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL , fontScale=0.5, color=(0,0,255))
             
                 
         for stone in black_stones_transf:
             
+            # Draw the position of the stone for testing 
             cv2.circle(self.transformed_image, np.array(stone).astype(dtype=np.int32), 3, (0, 0, 255), 2)
             
-            nearest_corner = None
-            closest_distance = 100000
-            for inter in transformed_intersections:
-                distance = math.dist(inter, stone)
-                if distance < closest_distance:
-                    nearest_corner = tuple(inter)
-                    closest_distance = distance
-            # cv2.circle(self.transformed_image, np.array(nearest_corner).astype(dtype=np.int32), 3, (0, 255, 0), 2)
-            # print("B", stone, self.map[nearest_corner])
+            nearest_corner = self.find_nearest_corner(transformed_intersections, stone)
             self.state[self.map[nearest_corner][1], self.map[nearest_corner][0], 0] = 1
+            
+            # Draw the distance between the center of the stones and the intersection it was assigned to for testing
             cv2.line(self.transformed_image, (int(stone[0]), int(stone[1])), nearest_corner, (0, 255, 255), 2)
-            # cv2.putText(self.transformed_image, f"{(self.map[nearest_corner])}", nearest_corner, fontFace=cv2.FONT_HERSHEY_COMPLEX_SMALL , fontScale=0.5, color=(0,0,255))
         
         # imshow_(self.transformed_image)
+    
+    def find_nearest_corner(self, transformed_intersections, stone):
+        """
+        Find the nearest corner point from a list of transformed intersections to a given stone.
+
+        This function calculates the distance between the stone and each transformed intersection point,
+        and returns the coordinates of the nearest corner point along with the distance.
+
+        Args:
+            transformed_intersections (list): List of transformed intersection points.
+            stone (tuple): Coordinates of the stone.
+
+        Returns:
+            tuple: Coordinates of the nearest corner point.
+        """
+        nearest_corner = None
+        closest_distance = float('inf')  # Set initial distance to positive infinity
+
+        # Iterate through transformed intersections to find the nearest corner
+        for inter in transformed_intersections:
+            distance = math.dist(inter, stone)
+            if distance < closest_distance:
+                nearest_corner = tuple(inter)
+                closest_distance = distance
+
+        return nearest_corner

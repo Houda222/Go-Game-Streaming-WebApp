@@ -20,11 +20,6 @@ def processing_thread():
                     game_plot, sgf_text = game.initialize_game(ProcessFrame)
                     initialized = True
                 else:
-                    
-                ############ WA SMA3NI MZZZZN DB.  game_plot HYA LA VARIABLE LLI FIHA L'IMAGE DESSINé
-                ############ B LE CODE DYAL GoVisual;
-                ############ O sgf_filename HOWA LE NOM DYAL LE FICHER SGF LLI T ENREGISTRA 
-                ############ QUI CORRESPOND A game_plot
                     game_plot, sgf_text = game.main_loop(ProcessFrame)
                 # game_plot, sgf_filename = show_board(model, ProcessFrame)
                 cv2.imshow("master", game_plot)
@@ -86,8 +81,6 @@ while cap.isOpened():
     if not ret:
         break
     
-    ########################## frame HYA LA VARIABLE LLI FIHA CHAQUE IMAGE DYAL STREAM
-    ########################## YA3NI LE FLUX DE VIDEO QUI DOIT ETRE STREAMé
     ProcessFrame = copy.deepcopy(frame)
     
     cv2.imshow('Video Stream', frame)
