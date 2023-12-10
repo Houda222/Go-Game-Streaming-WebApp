@@ -175,13 +175,13 @@ class GoGame:
 
         # Play a move for a newly added black stone
         if len(black_stone_indices) != 0:
-            self.play_move(black_stone_indices[0][0] + 1, black_stone_indices[0][1] + 1, 1)  # 1 is black_stone
+            self.play_move(black_stone_indices[0][0] + 1, black_stone_indices[0][1] + 1, player=1)  # 1 is black_stone
             self.moves.append(('B', (black_stone_indices[0][0], 18 - black_stone_indices[0][1])))
             return
 
         # Play a move for a newly added white stone
         if len(white_stone_indices) != 0:
-            self.play_move(white_stone_indices[0][0] + 1, white_stone_indices[0][1] + 1, 2)  # 2 is white_stone
+            self.play_move(white_stone_indices[0][0] + 1, white_stone_indices[0][1] + 1, player=2)  # 2 is white_stone
             self.moves.append(('W', (white_stone_indices[0][0], 18 - white_stone_indices[0][1])))
             return
 
