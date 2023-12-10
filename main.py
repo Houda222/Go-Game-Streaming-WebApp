@@ -30,17 +30,17 @@ go_visual = GoVisual(game)
 go_board = GoBoard(model)
 game = GoGame(game, go_board, go_visual)
 
-blank_image = np.ones((300, 300, 3), dtype=np.uint8) * 255
+blank_image = np.ones((100, 100, 3), dtype=np.uint8) * 255
 game_plot = blank_image
 ProcessFrame = None
 Process = True
 affichage = "dernier"
 game_plot_modified = False
+initialized = False
 
 def processing_thread():
     
-    global ProcessFrame, Process, game_plot, message,game_plot_modified
-    initialized = False
+    global ProcessFrame, Process, game_plot, message,game_plot_modified,initialized
 
     while Process:
         if not ProcessFrame is None:
@@ -49,41 +49,19 @@ def processing_thread():
                     game_plot = game.initialize_game(ProcessFrame)
                     initialized = True
                 else:
+                    # if not game_plot_modified:
                     # game_plot, sgf_text = game.main_loop(ProcessFrame)
-                    if not game_plot_modified:
-                        game_plot = game.main_loop(ProcessFrame) #je n'oublie pas le txt
+                    game_plot = game.main_loop(ProcessFrame)
 
-                    
-                ############ WA SMA3NI MZZZZN DB.  game_plot HYA LA VARIABLE LLI FIHA L'IMAGE DESSINé
-                ############ B LE CODE DYAL HOUDA;
-                ############ O sgf_filename HOWA LE NOM DYAL LE FICHER SGF LLI T ENREGISTRA 
-                ############ QUI CORRESPOND A game_plot
-                    # game_plot = game.main_loop(ProcessFrame).final_position #je n'oublie pas le txt
-                    
-                    else :
-                        if affichage== "dernier":
-                            game_plot = game.go_visual.final_position()
-                            game_plot_modified = False
-                        elif affichage == "precedent":
-                            game_plot = game.go_visual.previous()
-                            game_plot_modified = True
-
-                            
-                    # elif affichage == "suivant":
-                    #     game_plot = game_plot.next()
-                    # elif affichage == "premier":
-                    #     game_plot = game_plot.initial_position()
                 # game_plot, sgf_filename = show_board(model, ProcessFrame)
                 # cv2.imshow("master", game_plot)
                 # cv2.imshow("annotated", game.board_detect.annotated_frame)
                 # cv2.imshow("transformed", game.board_detect.transformed_image)
-                
-                
+                    
             except Exception as e:
                 message = "L'erreur est "+str(e)
                 
-                
-            
+                    
 
 
 # Route pour afficher la page HTML
@@ -113,7 +91,10 @@ def generate_plot():
     #     for j in range(0, height, square_size * 2):
     #         game_plot[j:j+square_size, i:i+square_size] = [0, 255, 0]  # Vert
     #         game_plot[j+square_size:j+2*square_size, i+square_size:i+2*square_size] = [0, 255, 0]  # Vert
-    _, img_encoded = cv2.imencode('.jpg', game_plot)
+    # if  not initialized:
+    #     _, img_encoded = cv2.imencode('.jpg', game_plot)
+    # else:
+    _, img_encoded = cv2.imencode('.jpg', game.go_visual.current_position())
     img_base64 = base64.b64encode(img_encoded).decode('utf-8')
     return img_base64
 
@@ -172,12 +153,26 @@ def getval():
     i = request.form['psw2']
     if i =='2':
         affichage = "premier"
+        go_visual.initial_position()
     elif i == '3':
         affichage = "precedent"
+        go_visual.previous()
     elif i == '4':
         affichage = "suivant"
+        go_visual.next()
     elif i == '5':
         affichage = "dernier"
+        go_visual.final_position()
+        
+    # elif affichage== "dernier":
+    #     _, img_encoded = cv2.imencode('.jpg', game.go_visual.final_position())
+    # elif affichage == "precedent":
+    #     _, img_encoded = cv2.imencode('.jpg', go_visual.previous())
+    # elif affichage == "suivant":
+    #     _, img_encoded = cv2.imencode('.jpg', go_visual.next())
+    # elif affichage == "premier":
+    #     _, img_encoded = cv2.imencode('.jpg', go_visual.initial_position())
+    
             
         
     return render_template('index.html', disabled_button=disabled_button)

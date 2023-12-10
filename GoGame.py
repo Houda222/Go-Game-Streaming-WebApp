@@ -106,7 +106,8 @@ class GoGame:
         # self.define_new_move()
 
         # Return the current position on the board and the SGF representation of the game
-        return self.go_visual.current_position(), self.get_sgf()
+        # return self.go_visual.current_position(), self.get_sgf()
+        return self.go_visual.current_position()
 
     
     def play_move(self, x, y, stone_color):

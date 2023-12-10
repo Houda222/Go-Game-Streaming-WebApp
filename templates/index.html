@@ -51,17 +51,34 @@
             });
         });
     </script>
+    <style>
+        #video-container, #image {
+            float: left;
+            width: 30%; /* Chaque div prend la moitié de la largeur */
+            box-sizing: border-box; /* Inclut la bordure et le padding dans la largeur */
+            margin-right: 10px; /* Ajustez la marge selon vos besoins */
+        }
+
+        #camera-feed, #image img {
+            width: 100%; /* Les images occupent la largeur complète de leur parent */
+            height: auto; /* Maintient le ratio d'aspect original */
+        }
+
+        #message {
+            clear: both; /* Empêche les éléments suivants de flotter à gauche ou à droite des div flottantes */
+            margin-top: 10px; /* Ajoute de l'espace entre le message et les div précédentes */
+        }
+    </style>
     <div id="video-container">
-        <img id="camera-feed" src="{{ url_for('video_feed') }}" width="50%"/>
+        <img id="camera-feed" src="{{ url_for('video_feed') }}" alt="Camera Feed">
     </div>
-    
+    <div id="image">
+        <img id="image" src="" alt="Image">
+    </div>
     <div id="message">
         {{ message }}
     </div>
 
-    <div id="image">
-        <img id="image" src="" width="50%" /> <!-- Ajoutez une balise img avec un ID -->
-    </div>   
 
     <script>
         function updateMessage() {
