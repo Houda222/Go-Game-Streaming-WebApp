@@ -50,8 +50,8 @@ def processing_thread():
                     initialized = True
                 else:
                     # if not game_plot_modified:
-                    # game_plot, sgf_text = game.main_loop(ProcessFrame)
-                    game_plot = game.main_loop(ProcessFrame)
+                    game_plot, sgf_text = game.main_loop(ProcessFrame)
+                    # game_plot = game.main_loop(ProcessFrame)
 
                 # game_plot, sgf_filename = show_board(model, ProcessFrame)
                 # cv2.imshow("master", game_plot)
@@ -95,6 +95,7 @@ def generate_plot():
     #     _, img_encoded = cv2.imencode('.jpg', game_plot)
     # else:
     _, img_encoded = cv2.imencode('.jpg', game.go_visual.current_position())
+    # _, img_encoded = cv2.imencode('.jpg', game_plot)
     img_base64 = base64.b64encode(img_encoded).decode('utf-8')
     return img_base64
 

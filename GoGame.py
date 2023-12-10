@@ -2,7 +2,6 @@ from GoVisual import *
 import sente
 
 
-
 class GoGame:
     """
     GoGame is the class responsible for managing the game, comparing frames and finding the newly played move
@@ -106,8 +105,7 @@ class GoGame:
         # self.define_new_move()
 
         # Return the current position on the board and the SGF representation of the game
-        # return self.go_visual.current_position(), self.get_sgf()
-        return self.go_visual.current_position()
+        return self.go_visual.current_position(), self.get_sgf()
 
     
     def play_move(self, x, y, stone_color):
@@ -213,7 +211,7 @@ class GoGame:
 
         # Play moves for black stones
         for stone in black_stone_indices:
-            self.play_move(stone[0] + 1, stone[1] + 1, 1)
+            self.play_move(stone[0] + 1, stone[1] + 1, player=1)
             self.game.pss()
 
         # Pass a turn after playing all black stones
@@ -221,7 +219,7 @@ class GoGame:
 
         # Play moves for white stones
         for stone in white_stone_indices:
-            self.play_move(stone[0] + 1, stone[1] + 1, 2)
+            self.play_move(stone[0] + 1, stone[1] + 1, player=2)
             self.game.pss()
 
         # Pass a turn after playing all white stones
