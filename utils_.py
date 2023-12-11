@@ -528,7 +528,6 @@ def lines_detection(model_results, perspective_matrix):
     all_intersections = all_intersections[(all_intersections[:, 0:2] >= 0).all(axis=1) & (all_intersections[:, 0:2] <= 600).all(axis=1)]
 
 
-
     all_intersections = all_intersections[all_intersections[:, 0].argsort()]
 
     all_intersections_x = all_intersections[:,0].reshape((-1, 1))
