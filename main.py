@@ -11,6 +11,7 @@ import base64
 from time import sleep
 
 
+
 app = Flask(__name__, static_url_path='/static')
 
 
@@ -30,12 +31,10 @@ go_visual = GoVisual(game)
 go_board = GoBoard(model)
 game = GoGame(game, go_board, go_visual)
 
-blank_image = np.ones((100, 100, 3), dtype=np.uint8) * 255
-game_plot = blank_image
+game_plot = np.ones((100, 100, 3), dtype=np.uint8) * 255
+
 ProcessFrame = None
 Process = True
-affichage = "dernier"
-game_plot_modified = False
 initialized = False
 
 def processing_thread():
@@ -48,11 +47,9 @@ def processing_thread():
                 if not initialized:
                     game_plot = game.initialize_game(ProcessFrame)
                     initialized = True
-                else:
-                    # if not game_plot_modified:
+                else:                    
                     game_plot, sgf_text = game.main_loop(ProcessFrame)
-                    # game_plot = game.main_loop(ProcessFrame)
-
+                    
                 # game_plot, sgf_filename = show_board(model, ProcessFrame)
                 # cv2.imshow("master", game_plot)
                 # cv2.imshow("annotated", game.board_detect.annotated_frame)
@@ -71,13 +68,8 @@ def index():
 
     return render_template('index.html',disabled_button = 'start-button')
 
-# @app.route('/msg')
-# def afficher_message():
-#     global message
-    
-#     return render_template('index.html', message=message)
-
 def generate_plot():
+    global game_plot
     # width, height = 640, 480
 
     # # Création d'une image noire
@@ -94,21 +86,16 @@ def generate_plot():
     # if  not initialized:
     #     _, img_encoded = cv2.imencode('.jpg', game_plot)
     # else:
+    
     _, img_encoded = cv2.imencode('.jpg', game.go_visual.current_position())
-    # _, img_encoded = cv2.imencode('.jpg', game_plot)
     img_base64 = base64.b64encode(img_encoded).decode('utf-8')
+
     return img_base64
 
 @app.route('/update')
 def afficher_message():
     return {'message': message, 'image' : generate_plot()}
 
-
-# # Route pour obtenir le message en JSON
-# @app.route('/get_message')
-# def get_message():
-#     global message
-#     return jsonify({'message': message})
 
 def generate_frames():
     global ProcessFrame
@@ -130,11 +117,6 @@ def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-
-# @app.route('/get_plot')
-# def get_plot():
-#     return generate_plot()
-
 @app.route('/', methods=['POST'])
 def getval():
     global Process, camera, affichage
@@ -153,28 +135,13 @@ def getval():
     disabled_button = None
     i = request.form['psw2']
     if i =='2':
-        affichage = "premier"
-        go_visual.initial_position()
+        game.go_visual.initial_position()
     elif i == '3':
-        affichage = "precedent"
-        go_visual.previous()
+        game.go_visual.previous()
     elif i == '4':
-        affichage = "suivant"
-        go_visual.next()
+        game.go_visual.next()
     elif i == '5':
-        affichage = "dernier"
-        go_visual.final_position()
-        
-    # elif affichage== "dernier":
-    #     _, img_encoded = cv2.imencode('.jpg', game.go_visual.final_position())
-    # elif affichage == "precedent":
-    #     _, img_encoded = cv2.imencode('.jpg', go_visual.previous())
-    # elif affichage == "suivant":
-    #     _, img_encoded = cv2.imencode('.jpg', go_visual.next())
-    # elif affichage == "premier":
-    #     _, img_encoded = cv2.imencode('.jpg', go_visual.initial_position())
-    
-            
+        game.go_visual.final_position()       
         
     return render_template('index.html', disabled_button=disabled_button)
 
@@ -203,28 +170,3 @@ if __name__ == '__main__':
     process_thread = threading.Thread(target=processing_thread, args=())
     process_thread.start()
     app.run(debug=False)
-
-# cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-
-# while cap.isOpened():
-#     ret, frame = cap.read()
-#     if not ret:
-#         break
-    
-#     ########################## frame HYA LA VARIABLE LLI FIHA CHAQUE IMAGE DYAL STREAM
-#     ########################## YA3NI LE FLUX DE VIDEO QUI DOIT ETRE STREAMé
-#     ProcessFrame = copy.deepcopy(frame)
-    
-#     cv2.imshow('Video Stream', frame)
-    
-#     key_pressed = cv2.waitKey(1) & 0xFF
-    
-#     # if key_pressed == ord('p'):
-#     #     print("button pressed")
-    
-#     if key_pressed == ord('q'):
-#         Process = False
-#         break 
-
-# cap.release()
-# cv2.destroyAllWindows()
