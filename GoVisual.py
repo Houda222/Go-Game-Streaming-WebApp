@@ -56,23 +56,7 @@ class GoVisual:
     
 
     def initialize_param(self, nb_moves=0):
-        """
-        Initialize parameters of the GoBoard based on the specified number of moves.
-        The method should keep track of all the "lost" or deleted moves while using the self.previous method 
-        and ensure we're at the right current number of moves.
-        The use of both "moves" and "board" is necessary: moves contains the order of stones, which is crucial since we want to navigate through the game
-        while board omit the stones that shouldn't be showed (captured, illegal stones).
-
-        Parameters:
-        -----------
-        nb_moves : int, optional
-            Number of moves to initialize the board with. Default is 0.
-            Can be positive (used in self.next()) or negative (self.previous()).
-
-        Returns:
-        -----------
-            None
-        """
+       
         self.get_stones(self.update_moves(self.game.numpy(["black_stones", "white_stones"]), self.get_moves()))
 
         if nb_moves<0:
@@ -112,14 +96,6 @@ class GoVisual:
     
     
     def get_moves(self):
-        """
-        Remove pass move; when we use game.pss(), a move named "u19" is added to the sequence. 
-
-        Returns:
-        --------
-        moves: List
-            Cleaned sequence
-        """
         moves = []
         for move in self.game.get_sequence():
             if move.get_x() == 19 and move.get_y() == 19:
@@ -258,6 +234,7 @@ class GoVisual:
 
 
 
+
 # # %%
 # import sente
 
@@ -273,15 +250,14 @@ class GoVisual:
 # g.play(4,3)
 
 
+
 # # %%
 # board = GoVisual(g)
-# res = board.current_position()
+# res = board.final_position()
 # cv2.imshow("result", res)
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
 
-# # %%
-# board.previous()
 
 
 # # %%
@@ -330,23 +306,4 @@ class GoVisual:
 # cv2.destroyAllWindows()
 # # %%
 
-# # %%
-# res = board.current_position()
-# cv2.imshow("result", res)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-# # %%
-# board.next()
-
-
-# # %%
-# res = board.current_position()
-# cv2.imshow("result", res)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-# # %%
-# board.final_position()
-
-# # %%
-# board.initial_position()
-# # %%
+# %%
