@@ -22,7 +22,8 @@ camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)  # Le numéro 0 indique la caméra pa
 
 # game_plot = np.ones((600, 600, 3), dtype=np.uint8) * 255
 message = "Il n'y a pas d'erreur "
-message_affiche = message
+disabled_button = 'start-button'
+
 
 
 model = YOLO('model.pt')
@@ -32,14 +33,14 @@ go_board = GoBoard(model)
 game = GoGame(game, go_board, go_visual)
 
 game_plot = np.ones((100, 100, 3), dtype=np.uint8) * 255
-
+usual_message = "camera is well fixed and everything is okay"
 ProcessFrame = None
 Process = True
 initialized = False
 
 def processing_thread():
     
-    global ProcessFrame, Process, game_plot, message,game_plot_modified,initialized
+    global ProcessFrame, Process, game_plot, message,game_plot_modified,initialized, copy_game_plot
 
     while Process:
         if not ProcessFrame is None:
@@ -47,8 +48,11 @@ def processing_thread():
                 if not initialized:
                     game_plot = game.initialize_game(ProcessFrame)
                     initialized = True
+                    message = usual_message
+
                 else:                    
                     game_plot, sgf_text = game.main_loop(ProcessFrame)
+                    message = usual_message
                     
                 # game_plot, sgf_filename = show_board(model, ProcessFrame)
                 # cv2.imshow("master", game_plot)
@@ -119,20 +123,24 @@ def video_feed():
 
 @app.route('/', methods=['POST'])
 def getval():
-    global Process, camera, affichage
-    # k = request.form['psw1']
+    global Process, camera
+    k = request.form['psw1']
     
-    # if k == '0':
-    #     camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
-    #     Process = True
-    #     disabled_button = 'start-button'  # Définir l'ID du bouton à désactiver
-    # elif k == '1':
-    #     camera.release()
-    #     Process = False
-    #     disabled_button = 'stop-button'  # Définir l'ID du bouton à désactiver
-    # else:
-    #     disabled_button = None
-    disabled_button = None
+    if k == '0':
+        camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+        Process = True
+        disabled_button = 'start-button'  # Définir l'ID du bouton à désactiver
+    elif k == '1':
+        camera.release()
+        Process = False
+        disabled_button = 'stop-button'  # Définir l'ID du bouton à désactiver
+   
+        
+    return render_template('index.html', disabled_button=disabled_button)
+
+@app.route('/game', methods=['POST'])
+def getval2():
+    global Process, camera
     i = request.form['psw2']
     if i =='2':
         game.go_visual.initial_position()
@@ -141,11 +149,8 @@ def getval():
     elif i == '4':
         game.go_visual.next()
     elif i == '5':
-        game.go_visual.final_position()       
-        
+        game.go_visual.final_position()    
     return render_template('index.html', disabled_button=disabled_button)
-
-
 
 @app.route('/sommaire')
 def sommaire():

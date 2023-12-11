@@ -30,8 +30,8 @@
     <button type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
 </form>
 
-    <form method="POST" action="/" id="move">
-        <button type="submit" id="start-button" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   premier;</button>     
+    <form method="POST" action="/game" id="move">
+        <button type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   premier;</button>     
         <button type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   precedent;</button>     
         <button type="submit" id="start-button2" name="psw2" value="4" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   suivant;</button>     
         <button type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   dernier;</button>     
@@ -43,10 +43,7 @@
     <script>
         $(document).ready(function() {
             $("#myForm button").click(function() {
-                // Désactiver tous les boutons à l'intérieur du formulaire
                 $("#myForm button").prop("disabled", true);
-                
-                // Activer le bouton cliqué
                 $(this).prop("disabled", false);
             });
         });
