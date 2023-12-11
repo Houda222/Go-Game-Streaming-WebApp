@@ -37,17 +37,36 @@
         <button type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   dernier;</button>     
         
     </form>
-
-
     
+    <form method="POST" action="/rules" id="check">
+        <input type="checkbox" id="rules" name="psw3" value="6" {% if check == 'True' %}checked{% endif %} >
+        <label for="rules">Appliquer le module des règles</label>
+    </form>
+
+    <form method="POST" action="/change_place" id="change">
+        <label for="input1">Champ 1 :</label>
+        <input type="text" id="input1" name="input1" placeholder="Entrez l'ancien emplacement de la pièce">
+
+        <br>
+
+        <label for="input2">Champ 2 :</label>
+        <input type="text" id="input2" name="input2" placeholder="Entrez le nouveau emplacement de la pièce">
+
+        <br>
+
+        <button type="submit">Soumettre le changement</button>
+    </form>
+
     <script>
-        $(document).ready(function() {
-            $("#myForm button").click(function() {
-                $("#myForm button").prop("disabled", true);
-                $(this).prop("disabled", false);
-            });
+        document.getElementById('rules').addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('check').submit();
+            }
         });
     </script>
+
+    
+  
     <style>
         #video-container, #image {
             float: left;

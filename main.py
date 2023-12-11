@@ -152,6 +152,25 @@ def getval2():
         game.go_visual.final_position()    
     return render_template('index.html', disabled_button=disabled_button)
 
+@app.route('/rules', methods=['POST'])
+def handle_rules():
+
+    print("Le checkbox est coché !")
+    checkbox_value = request.form['psw3']
+    
+    return render_template('index.html', disabled_button=disabled_button, check ="True" )
+
+@app.route('/change_place', methods=['POST'])
+def change_place():
+
+    ancien_emplacement = request.form['input1']
+    nouveau_emplacement = request.form['input2']
+
+    print("Ancien emplacement:", ancien_emplacement)
+    print("Nouveau emplacement:", nouveau_emplacement)
+    return render_template('index.html')
+
+
 @app.route('/sommaire')
 def sommaire():
     camera.release()
