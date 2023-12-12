@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 
-class GoVisual:
+class GoVisual2:
     """
     class GoVisual: 
     creates a go game visual representation given a Sente game provided by the Sente class
@@ -22,15 +22,13 @@ class GoVisual:
             the game instance created by Sente and updated by GoGame 
         """
         self.game = game
-        self.moves = self.get_moves()
-        self.total_number_of_moves  = len(self.moves)
         self.board_size = 19
         self.last_move = None
-        self.deleted_moves = []
-        self.cursor = self.total_number_of_moves
+        self.cursor = len(self.get_moves())
         self.step = 0
+        self.track_progress = True
 
-    def get_stones(self, moves):
+    def get_stones(self, board):
         """
         Count and collect positions of the stones on the board.
 
@@ -40,53 +38,17 @@ class GoVisual:
             A Sequence of moves provided by Sente
 
         """
-        self.nb_black_stones = 0
-        self.nb_white_stones = 0
         self.black_stones = []
         self.white_stones = []
-        for move in moves:
-            # Extract the stone vector at the current position
-            row, col, color = move.get_x(), move.get_y(), move.get_stone().name
-            # Check the color of the stone
-            if color == "BLACK":  # Black stone
-                self.nb_black_stones += 1
-                self.black_stones.append((row, col))
-            elif color == "WHITE":  # White stone
-                self.nb_white_stones += 1
-                self.white_stones.append((row, col))
-    
-    
-    def update_moves(self, board, moves):
-        """
-        Filter out captured stones and illegal moves that are not present on the Sente board
-        since the sequence contains all the moves while the board contains only the moves that should be showed
-
-        Parameters:
-        -----------
-        board : numpy.ndarray
-            19x19x2, representing the current state of the game board.
-
-        moves : list
-            A Sequence of moves provided by Sente
-
-        Returns:
-        -----------
-        list
-            List of valid moves present on the board.
-
-        """
-        # Filter out moves that are not present on the board
-        valid_moves = []
-
-        for move in moves:
-            row, col, color = move.get_x(), move.get_y(), move.get_stone().name
-            if ((board[row][col] == [1, 0]).all() or (board[row][col] == [0, 1]).all()):
-                valid_moves.append(move)
-
-        return valid_moves
+        for i in range(board.shape[0]):
+            for j in range(board.shape[1]):
+                if np.array_equal(board[i, j], [1, 0]):  # Black stone
+                    self.black_stones.append((i, j))
+                elif np.array_equal(board[i, j], [0, 1]):  # White stone
+                    self.white_stones.append((i, j))
     
 
-    def initialize_param(self, nb_moves=0):
+    def update_param(self):
         """
         Initialize parameters of the GoBoard based on the specified number of moves.
         The method should keep track of all the "lost" or deleted moves while using the self.previous method 
@@ -104,48 +66,19 @@ class GoVisual:
         -----------
             None
         """
-        self.moves = self.get_moves()
-        self.get_stones(self.update_moves(self.game.numpy(["black_stones", "white_stones"]), self.moves))
-        
-        if nb_moves<0:
-            # Update deleted moves
-            self.deleted_moves = self.moves[nb_moves:] + self.deleted_moves
-            
-            # Filter repeated deleted moves (happens when using initial position)
-            self.unique_deleted_moves = []
-            
-            for move in self.deleted_moves:
-                if move not in self.unique_deleted_moves:
-                    self.unique_deleted_moves.append(move)
-            
-            # Delete the moves we don't want to show
-            self.game.step_up(-nb_moves)
-
-            # Update the parameters
-            self.moves = self.get_moves()
-            self.board = self.game.numpy(["black_stones", "white_stones"])
-
-            # Get the list of stones based on the filtered moves
-            self.get_stones(self.update_moves(self.board, self.get_moves()))
-
-        elif nb_moves>0:
-
-            if len(self.deleted_moves) != 0 :
-
-                # Add the desired number of deleted moves to the game to rewind the game state
-                for move in self.deleted_moves[:nb_moves]:
-                    x, y, color = move.get_x()+1, move.get_y()+1, move.get_stone().name
-                    self.game.play(x,y)
-                    self.deleted_moves.pop(0)
-
-                self.board = self.game.numpy(["black_stones", "white_stones"])
-                self.moves = self.get_moves()
-                self.get_stones(self.update_moves(self.board, self.moves))
+        deleted_moves = []
+        if self.cursor - len(self.get_moves()) != 0:
+            deleted_moves = self.get_moves()[self.cursor - len(self.get_moves()):]
+        self.game.step_up(len(self.get_moves()) - self.cursor)
+        self.get_stones(self.game.numpy(["black_stones", "white_stones"]))        
         
         if self.get_moves() != []:
             self.last_move = self.get_moves()[-1]
-    
-    
+
+        for move in deleted_moves:
+                x, y, color = move.get_x()+1, move.get_y()+1, move.get_stone().name
+                self.game.play(x,y)
+
     def get_moves(self):
         """
         Remove pass move; when we use game.pss(), a move named "u19" is added to the sequence. 
@@ -162,6 +95,91 @@ class GoVisual:
             moves.append(move)
         return moves
     
+    def initial_position(self):
+        """
+        Display the initial position with the first move
+
+        Returns:
+        --------
+        numpy array
+            The resulted board drawn with only the first played move
+        """
+        self.track_progress = False
+        self.cursor = 1
+
+    def final_position(self):
+        """
+        Display the final position 
+
+        Returns:
+        --------
+        numpy array
+            The resulted board drawn with all the played moves 
+        """
+        self.track_progress = True
+ 
+
+    def current_turn(self):
+        """
+        Display whose turn to play
+
+        Returns:
+        --------
+        string
+            The color of the current turn
+        """
+        if self.last_move[2].get_stone().name == 'BLACK':
+            return 'WHITE' 
+        elif self.last_move[2].get_stone().name == 'WHITE' or self.cursor == 0:
+            return 'BLACK'
+        
+    def previous(self):
+        """
+        Display the previous position
+
+        Returns:
+        --------
+        numpy array
+            The board one move before the displayed position
+        """
+        self.track_progress = False
+        if self.cursor > 1:
+            self.cursor -= 1
+        # self.initialize_param(-1)
+        # return self.drawBoard()
+
+    def next(self):
+        """
+        Display the next position
+
+        Returns:
+        --------
+        numpy array
+            The board one move after the displayed position
+        """
+        self.track_progress = False
+        if self.cursor < len(self.get_moves()):
+            self.cursor +=1
+
+        # self.initialize_param(1)
+        # return self.drawBoard()
+
+    def current_position(self):
+        """
+        Display the current position
+
+        Returns:
+        --------
+        numpy array
+            The board
+        """
+        if self.track_progress:
+            self.cursor = len(self.get_moves())
+        print("cursor", self.cursor)
+        print("total", len(self.get_moves()))
+        self.update_param()
+        return self.drawBoard()
+
 
     def drawBoard(self):
         """
@@ -228,83 +246,6 @@ class GoVisual:
 
     
     
-    def initial_position(self):
-        """
-        Display the initial position with the first move
-
-        Returns:
-        --------
-        numpy array
-            The resulted board drawn with only the first played move
-        """
-        self.cursor = 1
-
-    def final_position(self):
-        """
-        Display the final position 
-
-        Returns:
-        --------
-        numpy array
-            The resulted board drawn with all the played moves 
-        """
-        self.cursor = len(self.moves) + len(self.deleted_moves)
- 
-
-    def current_turn(self):
-        """
-        Display whose turn to play
-
-        Returns:
-        --------
-        string
-            The color of the current turn
-        """
-        if self.last_move[2].get_stone().name == 'BLACK':
-            return 'WHITE' 
-        elif self.last_move[2].get_stone().name == 'WHITE' or self.cursor == 0:
-            return 'BLACK'
-        
-    def previous(self):
-        """
-        Display the previous position
-
-        Returns:
-        --------
-        numpy array
-            The board one move before the displayed position
-        """
-        self.cursor -= 1
-        self.step = self.cursor - len(self.moves)
-        # self.initialize_param(-1)
-        # return self.drawBoard()
-
-    def next(self):
-        """
-        Display the next position
-
-        Returns:
-        --------
-        numpy array
-            The board one move after the displayed position
-        """
-        self.cursor +=1
-        # self.initialize_param(1)
-        # return self.drawBoard()
-
-    def current_position(self):
-        """
-        Display the current position
-
-        Returns:
-        --------
-        numpy array
-            The board one move after the displayed position
-        """
-
-        self.initialize_param(self.step)
-        return self.drawBoard()
-
 # # %%
 # #Example of usage
 # import sente
