@@ -126,7 +126,7 @@ class GoGame:
 
         except sente.exceptions.IllegalMoveException as e:
             # Handle different types of illegal move exceptions and raise a custom Exception with details
-            error_message = f"A violation of go game rules has been found in position {x}, {y}\n"
+            error_message = f"[GoGame Exception] - A violation of go game rules has been found in position {x}, {y}\n"
 
             if "self-capture" in str(e):
                 raise Exception(error_message + f" --> {color} stone at this position results in self-capture")
@@ -167,19 +167,21 @@ class GoGame:
 
         # Handle the case where more than one stone was added
         if len(black_stone_indices) + len(white_stone_indices) > 1:
-            print("More than one stone was added!")
+            print("[GoGame Log] - More than one stone was added!")
             return
 
         # Play a move for a newly added black stone
         if len(black_stone_indices) != 0:
             self.play_move(black_stone_indices[0][0] + 1, black_stone_indices[0][1] + 1, 1)  # 1 is black_stone
             self.moves.append(('B', (black_stone_indices[0][0], 18 - black_stone_indices[0][1])))
+            print(f"[GoGame Log] - Black stone was played at ({black_stone_indices[0][0], 18 - black_stone_indices[0][1]})")
             return
 
         # Play a move for a newly added white stone
         if len(white_stone_indices) != 0:
             self.play_move(white_stone_indices[0][0] + 1, white_stone_indices[0][1] + 1, 2)  # 2 is white_stone
             self.moves.append(('W', (white_stone_indices[0][0], 18 - white_stone_indices[0][1])))
+            print(f"[GoGame Log] - White stone was played at ({white_stone_indices[0][0], 18 - white_stone_indices[0][1]})")
             return
 
         # Print a message if no moves were detected
