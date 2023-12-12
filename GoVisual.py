@@ -25,7 +25,6 @@ class GoVisual:
         self.board_size = 19
         self.last_move = None
         self.cursor = len(self.get_moves())
-        self.step = 0
         self.track_progress = True
 
     def get_stones(self, board):
@@ -145,8 +144,7 @@ class GoVisual:
         self.track_progress = False
         if self.cursor > 1:
             self.cursor -= 1
-        # self.initialize_param(-1)
-        # return self.drawBoard()
+
 
     def next(self):
         """
@@ -160,9 +158,11 @@ class GoVisual:
         self.track_progress = False
         if self.cursor < len(self.get_moves()):
             self.cursor +=1
+        
+        if self.cursor == len(self.get_moves()):
+            self.track_progress = True
+        
 
-        # self.initialize_param(1)
-        # return self.drawBoard()
 
     def current_position(self):
         """
