@@ -27,7 +27,7 @@ class GoVisual:
         self.board_size = 19
         self.last_move = None
         self.deleted_moves = []
-        self.current_nb_of_moves = self.total_number_of_moves
+        self.cursor = self.total_number_of_moves
         self.step = 0
 
     def get_stones(self, moves):
@@ -104,7 +104,8 @@ class GoVisual:
         -----------
             None
         """
-        self.get_stones(self.update_moves(self.game.numpy(["black_stones", "white_stones"]), self.get_moves()))
+        self.moves = self.get_moves()
+        self.get_stones(self.update_moves(self.game.numpy(["black_stones", "white_stones"]), self.moves))
         
         if nb_moves<0:
             # Update deleted moves
@@ -236,7 +237,7 @@ class GoVisual:
         numpy array
             The resulted board drawn with only the first played move
         """
-        self.step = -len(self.get_moves())+1
+        self.cursor = 1
 
     def final_position(self):
         """
@@ -247,8 +248,8 @@ class GoVisual:
         numpy array
             The resulted board drawn with all the played moves 
         """
-        nb_moves = len(self.moves) + len(self.deleted_moves)
-        self.step = nb_moves
+        self.cursor = len(self.moves) + len(self.deleted_moves)
+ 
 
     def current_turn(self):
         """
@@ -261,7 +262,7 @@ class GoVisual:
         """
         if self.last_move[2].get_stone().name == 'BLACK':
             return 'WHITE' 
-        elif self.last_move[2].get_stone().name == 'WHITE' or self.current_number_of_moves == 0:
+        elif self.last_move[2].get_stone().name == 'WHITE' or self.cursor == 0:
             return 'BLACK'
         
     def previous(self):
@@ -273,8 +274,8 @@ class GoVisual:
         numpy array
             The board one move before the displayed position
         """
-        self.current_nb_of_moves -= 1
-        self.step = -1
+        self.cursor -= 1
+        self.step = self.cursor - len(self.moves)
         # self.initialize_param(-1)
         # return self.drawBoard()
 
@@ -287,8 +288,7 @@ class GoVisual:
         numpy array
             The board one move after the displayed position
         """
-        self.step = 1
-        self.current_nb_of_moves +=1
+        self.cursor +=1
         # self.initialize_param(1)
         # return self.drawBoard()
 
@@ -301,6 +301,7 @@ class GoVisual:
         numpy array
             The board one move after the displayed position
         """
+
         self.initialize_param(self.step)
         return self.drawBoard()
 
