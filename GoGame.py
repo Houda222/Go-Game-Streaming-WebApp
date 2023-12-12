@@ -78,7 +78,7 @@ class GoGame:
         if not self.game.get_active_player().name == current_player:
             self.game.pss()
 
-        return self.go_visual.final_position(), self.get_sgf()
+        return self.go_visual.current_position(), self.get_sgf()
         # return self.main_loop(frame)
     
     
