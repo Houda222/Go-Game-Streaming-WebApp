@@ -101,7 +101,7 @@ class GoGame:
         # Process the frame using the board detection module
         self.board_detect.process_frame(frame)
 
-        # self.define_new_move()
+        self.define_new_move()
         
         return self.go_visual.final_position(), self.get_sgf()
     

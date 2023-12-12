@@ -858,22 +858,22 @@ def line_distance(line1, line2):
     return (np.linalg.norm(line1[:2]-line2[:2]) + np.linalg.norm(line1[2:]-line2[2:])) / 2
 
 
-def calculate_distances(lines):
-    """
-    Calculate the distances between consecutive pairs of lines.
+# def calculate_distances(lines):
+#     """
+#     Calculate the distances between consecutive pairs of lines.
 
-    Parameters:
-    -----------
-    lines : list
-        List of arrays, each representing the endpoints of a line segment.
+#     Parameters:
+#     -----------
+#     lines : list
+#         List of arrays, each representing the endpoints of a line segment.
 
-    Returns:
-    -----------
-    list
-        List of distances between consecutive pairs of lines.
+#     Returns:
+#     -----------
+#     list
+#         List of distances between consecutive pairs of lines.
 
-    """
-    return [line_distance(lines[i + 1], lines[i]) for i in range(len(lines) - 1)]
+#     """
+#     return [line_distance(lines[i + 1], lines[i]) for i in range(len(lines) - 1)]
 
 def average_distance(lines):
     """
