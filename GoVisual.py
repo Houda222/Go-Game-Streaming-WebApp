@@ -308,56 +308,56 @@ class GoVisual:
         self.initialize_param(self.step)
         return self.drawBoard()
 
-# %%
-#Example of usage
-import sente
+# # %%
+# #Example of usage
+# import sente
 
-g = sente.Game()
-g.play(2,3)
-g.play(2,2)
-g.play(2,4)
-g.play(3,3)
-g.play(3,2)
-g.play(18,18)
-g.play(3,4)
-g.play(17,5)
-g.play(4,3)
-
-
-# %%
-board = GoVisual(g)
-res = board.current_position()
-cv2.imshow("result", res)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-#%%
-g.play(4,10)
-#%%
-g.play(10,10)
-# %%
-board.previous()
+# g = sente.Game()
+# g.play(2,3)
+# g.play(2,2)
+# g.play(2,4)
+# g.play(3,3)
+# g.play(3,2)
+# g.play(18,18)
+# g.play(3,4)
+# g.play(17,5)
+# g.play(4,3)
 
 
+# # %%
+# board = GoVisual(g)
+# res = board.current_position()
+# cv2.imshow("result", res)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+# #%%
+# g.play(4,10)
+# #%%
+# g.play(10,10)
+# # %%
+# board.previous()
 
-# %%
-res = board.current_position()
-cv2.imshow("result", res)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-# %%
-board.next()
 
 
-# %%
-res = board.current_position()
-cv2.imshow("result", res)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-# %%
-board.final_position()
+# # %%
+# res = board.current_position()
+# cv2.imshow("result", res)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+# # %%
+# board.next()
 
-# %%
-board.initial_position()
-# %%
 
-# %%
+# # %%
+# res = board.current_position()
+# cv2.imshow("result", res)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+# # %%
+# board.final_position()
+
+# # %%
+# board.initial_position()
+# # %%
+
+# # %%
