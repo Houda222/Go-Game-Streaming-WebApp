@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 
-class GoVisual2:
+class GoVisual:
     """
     class GoVisual: 
     creates a go game visual representation given a Sente game provided by the Sente class
