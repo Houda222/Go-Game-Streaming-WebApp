@@ -37,6 +37,8 @@ usual_message = "camera is well fixed and everything is okay"
 ProcessFrame = None
 Process = True
 initialized = False
+sgf_text = None
+
 
 def processing_thread():
     
@@ -166,9 +168,31 @@ def change_place():
     ancien_emplacement = request.form['input1']
     nouveau_emplacement = request.form['input2']
 
-    print("Ancien emplacement:", ancien_emplacement)
-    print("Nouveau emplacement:", nouveau_emplacement)
     return render_template('index.html')
+
+@app.route('/get_file_content')
+def get_file_content():
+    # # Chemin vers votre fichier texte
+    # file_path = "C:/Users/asent/Desktop/projet_16_go/example.sgf.txt"
+    
+    # with open(file_path, 'r') as file:
+    #     content = file.read()
+    return sgf_text
+
+@app.route('/process', methods=['POST'])
+def process():
+    # Vérifier si le fichier est inclus dans la requête
+    if 'file' not in request.files:
+        return "Aucun fichier trouvé"
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return "Aucun fichier sélectionné"
+
+    file.save('C:/Users/asent/Desktop/projet_16_go/livrables/' + file.filename)
+    return "Fichier traité avec succès"
+
 
 
 @app.route('/sommaire')
