@@ -145,8 +145,7 @@ class GoVisual:
         self.track_progress = False
         if self.cursor > 1:
             self.cursor -= 1
-        # self.initialize_param(-1)
-        # return self.drawBoard()
+
 
     def next(self):
         """
@@ -161,8 +160,6 @@ class GoVisual:
         if self.cursor < len(self.get_moves()):
             self.cursor +=1
 
-        # self.initialize_param(1)
-        # return self.drawBoard()
 
     def current_position(self):
         """

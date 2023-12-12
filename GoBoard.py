@@ -67,7 +67,7 @@ class GoBoard:
             # Perform perspective transformation on the frame
             perspective_matrix = cv2.getPerspectiveTransform(input_points, output_points)
             first_transformed_image = cv2.warpPerspective(self.frame, perspective_matrix, (output_edge, output_edge))
-            self.results = self.model(first_transformed_image)
+            self.results = self.model(first_transformed_image, verbose=False)
             
         else:
             first_transformed_image = self.frame
@@ -169,9 +169,9 @@ class GoBoard:
         self.frame = frame
 
         # Obtain detection results from the model
-        self.results = self.model(self.frame)
+        self.results = self.model(self.frame, verbose=False)
 
-        self.apply_perspective_transformation(double_transform=True)
+        self.apply_perspective_transformation(double_transform=False)
         
         # Annotate the frame with detection results (without labels and confidence)
         self.annotated_frame = self.results[0].plot(labels=False, conf=False)
