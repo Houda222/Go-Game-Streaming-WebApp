@@ -2,7 +2,6 @@ from utils_ import *
 import math, copy
 
 
-
 class GoBoard:
 
     def __init__(self, model):
@@ -41,6 +40,7 @@ class GoBoard:
         self.tranformed_image = None
         self.annotated_frame = None
         self.state = None
+        self.padding = 30
         
         
     def get_state(self):
@@ -55,80 +55,35 @@ class GoBoard:
         """
         return copy.deepcopy(self.state)
 
-    
-    def process_frame(self, frame):
-        """
-        Process a frame to extract information about the Go board.
+    def apply_perspective_transformation(self, double_transform=False):
+        if double_transform:
+            # Extract corners from the detection results
+            input_points = get_corners(self.results, self.padding)
 
-        Parameters:
-        -----------
-        frame : numpy.ndarray
-            Input frame representing the Go board.
+            # Define output points for perspective transformation
+            output_edge = 600 + self.padding * 2
+            output_points = np.array([[0, 0], [output_edge, 0], [output_edge, output_edge], [0, output_edge]], dtype=np.float32)
 
-        """
-        # Store the current frame
-        self.frame = frame
-
-        # Obtain detection results from the model
-        self.results = self.model(frame)
-
-        # Annotate the frame with detection results (without labels and confidence)
+            # Perform perspective transformation on the frame
+            perspective_matrix = cv2.getPerspectiveTransform(input_points, output_points)
+            first_transformed_image = cv2.warpPerspective(self.frame, perspective_matrix, (output_edge, output_edge))
+            self.results = self.model(first_transformed_image, verbose=False)
+            
+        else:
+            first_transformed_image = self.frame
+        
         self.annotated_frame = self.results[0].plot(labels=False, conf=False)
-
         # Extract corners from the detection results
-        input_points = get_corners(self.results)
+        input_points = get_corners(self.results, 0)
 
         # Define output points for perspective transformation
         output_edge = 600
         output_points = np.array([[0, 0], [output_edge, 0], [output_edge, output_edge], [0, output_edge]], dtype=np.float32)
 
         # Perform perspective transformation on the frame
-        perspective_matrix = cv2.getPerspectiveTransform(input_points, output_points)
-        self.transformed_image = cv2.warpPerspective(frame, perspective_matrix, (output_edge, output_edge))
-
-        # Detect vertical and horizontal lines
-        vertical_lines, horizontal_lines = lines_detection(self.results, perspective_matrix)
-
-        # Remove duplicate lines
-        vertical_lines = removeDuplicates(vertical_lines)
-        horizontal_lines = removeDuplicates(horizontal_lines)
-
-        # Restore and remove lines
-        vertical_lines = restore_and_remove_lines(vertical_lines)
-        horizontal_lines = restore_and_remove_lines(horizontal_lines)
-
-        # Add missing lines at the edges
-        vertical_lines = add_lines_in_the_edges(vertical_lines, "vertical")
-        horizontal_lines = add_lines_in_the_edges(horizontal_lines, "horizontal")
-
-        # Remove duplicate lines again
-        vertical_lines = removeDuplicates(vertical_lines)
-        horizontal_lines = removeDuplicates(horizontal_lines)
-
-        # Get key points for black and white stones
-        black_stones = get_key_points(self.results, 0, perspective_matrix)
-        white_stones = get_key_points(self.results, 6, perspective_matrix)
-
-        # Extract clusters of lines within the valid image region
-        cluster_1 = vertical_lines[(vertical_lines <= 600).all(axis=1) & (vertical_lines >= 0).all(axis=1)]
-        cluster_2 = horizontal_lines[(horizontal_lines <= 600).all(axis=1) & (horizontal_lines >= 0).all(axis=1)]
-
-        # Check if the correct number of lines is detected
-        if len(cluster_1) != 19 or len(cluster_2) != 19:
-            raise Exception(f"Incorrect number of lines was detected: {len(cluster_1)} vertical lines and {len(cluster_2)} horizontal lines")
-
-        # Detect intersections between vertical and horizontal lines
-        intersections = detect_intersections(cluster_1, cluster_2, self.transformed_image)
-
-        # Check if any intersections were found
-        if len(intersections) == 0:
-            raise Exception("No intersections were found!")
-        if len(intersections) != 361:
-            print("Not all intersections were found!")
-
-        # Assign stones to intersections
-        self.assign_stones(white_stones, black_stones, intersections)
-
+        self.perspective_matrix = cv2.getPerspectiveTransform(input_points, output_points)
+        self.transformed_image = cv2.warpPerspective(first_transformed_image, self.perspective_matrix, (output_edge, output_edge))
+    
     def assign_stones(self, white_stones_transf, black_stones_transf, transformed_intersections):
         """
         Assign stones to intersections based on their proximity.
@@ -199,3 +154,67 @@ class GoBoard:
                 closest_distance = distance
 
         return nearest_corner
+
+    def process_frame(self, frame):
+        """
+        Process a frame to extract information about the Go board.
+
+        Parameters:
+        -----------
+        frame : numpy.ndarray
+            Input frame representing the Go board.
+
+        """
+        # Store the current frame
+        self.frame = frame
+
+        # Obtain detection results from the model
+        self.results = self.model(self.frame, verbose=False)
+
+        self.apply_perspective_transformation(double_transform=False)
+        
+        # Annotate the frame with detection results (without labels and confidence)
+        self.annotated_frame = self.results[0].plot(labels=False, conf=False)
+        
+        # Detect vertical and horizontal lines
+        vertical_lines, horizontal_lines = lines_detection(self.results, self.perspective_matrix)
+
+        # Remove duplicate lines
+        vertical_lines = removeDuplicates(vertical_lines)
+        horizontal_lines = removeDuplicates(horizontal_lines)
+
+        # Restore and remove lines
+        vertical_lines = restore_and_remove_lines(vertical_lines)
+        horizontal_lines = restore_and_remove_lines(horizontal_lines)
+
+        # Add missing lines at the edges
+        vertical_lines = add_lines_in_the_edges(vertical_lines, "vertical")
+        horizontal_lines = add_lines_in_the_edges(horizontal_lines, "horizontal")
+
+        # Remove duplicate lines again
+        vertical_lines = removeDuplicates(vertical_lines)
+        horizontal_lines = removeDuplicates(horizontal_lines)
+
+        # Get key points for black and white stones
+        black_stones = get_key_points(self.results, 0, self.perspective_matrix)
+        white_stones = get_key_points(self.results, 6, self.perspective_matrix)
+
+        # Extract clusters of lines within the valid image region
+        cluster_1 = vertical_lines[(vertical_lines <= 600).all(axis=1) & (vertical_lines >= 0).all(axis=1)]
+        cluster_2 = horizontal_lines[(horizontal_lines <= 600).all(axis=1) & (horizontal_lines >= 0).all(axis=1)]
+
+        # Check if the correct number of lines is detected
+        if len(cluster_1) != 19 or len(cluster_2) != 19:
+            raise Exception(f"Incorrect number of lines was detected: {len(cluster_1)} vertical lines and {len(cluster_2)} horizontal lines")
+
+        # Detect intersections between vertical and horizontal lines
+        intersections = detect_intersections(cluster_1, cluster_2, self.transformed_image)
+
+        # Check if any intersections were found
+        if len(intersections) == 0:
+            raise Exception("No intersections were found!")
+        if len(intersections) != 361:
+            print("Not all intersections were found!")
+
+        # Assign stones to intersections
+        self.assign_stones(white_stones, black_stones, intersections)
