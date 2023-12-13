@@ -173,8 +173,8 @@ class GoVisual:
         """
         if self.track_progress:
             self.cursor = len(self.get_moves())
-        print("cursor", self.cursor)
-        print("total", len(self.get_moves()))
+        # print("cursor", self.cursor)
+        # print("total", len(self.get_moves()))
         self.update_param()
         return self.drawBoard()
 
