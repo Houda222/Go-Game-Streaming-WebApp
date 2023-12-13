@@ -1,5 +1,11 @@
+#%%
 from GoVisual import *
 import sente
+from ultralytics import YOLO
+import cv2
+from GoGame import *
+from GoBoard import *
+from GoVisual import *
 
 
 class GoGame:
@@ -224,7 +230,38 @@ class GoGame:
         # Pass a turn after playing all white stones
         self.game.pss()
 
-            
+    def correct_stone(self, old_pos, new_pos):
+        x = ord(str(old_pos[0])) - 64
+        y = old_pos[1]
+        new_x = ord(str(new_pos[0])) - 64 + 1
+        new_y = new_pos[1] + 1
+        moves = self.get_moves()
+        for i in len(moves):
+            if moves[i].get_x()+1 == x and moves[i].get_y()+1 == y:
+                deleted_moves = self.get_moves()[i - len(self.get_moves()):]
+                self.step_up(len(moves) - i)
+                self.play(new_x,new_y)
+                for move in deleted_moves:
+                    x, y, color = move.get_x()+1, move.get_y()+1, move.get_stone().name
+                    self.game.play(x,y)
+
+    def get_moves(self):
+        """
+        Remove pass move; when we use game.pss(), a move named "u19" is added to the sequence. 
+
+        Returns:
+        --------
+        moves: List
+            Cleaned sequence
+        """
+        moves = []
+        for move in self.get_sequence():
+            if move.get_x() == 19 and move.get_y() == 19:
+                continue
+            moves.append(move)
+        return moves
+
+
     def get_sgf(self):
         """
         Get the SGF (Smart Game Format) representation of the current game.
@@ -234,5 +271,19 @@ class GoGame:
         """
         # Use the sente.sgf.dumps function to convert the game to SGF format
         return sente.sgf.dumps(self.game)
+
+# %%
+model = YOLO('model.pt')
+game = sente.Game()
+go_visual = GoVisual(game)
+go_board = GoBoard(model)
+g = GoGame(game, go_board, go_visual)
+# %%
+g.game.play(2,3)
+g.game.play(2,2)
+g.game.play(2,4)
+g.game.play(3,3)
+g.game.play(3,2)
+
 
 # %%

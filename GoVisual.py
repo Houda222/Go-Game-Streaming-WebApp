@@ -161,8 +161,6 @@ class GoVisual:
         
         if self.cursor == len(self.get_moves()):
             self.track_progress = True
-        
-
 
     def current_position(self):
         """
@@ -219,8 +217,8 @@ class GoVisual:
             # Horizontal lines and letters
             cv2.line(board, (square_size, square_size*i), (square_size*(self.board_size), square_size*i), (0, 0, 0), thickness=1)
             #plt.text(-0.8, i, chr(97 + i), fontsize=8, color='black')  
-            cv2.putText(board, str(20-i), (5, square_size*i), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(0, 0, 0), thickness=1)
-            cv2.putText(board, str(20-i), (580, square_size*i), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(0, 0, 0), thickness=1)
+            cv2.putText(board, str(i), (5, square_size*i), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(0, 0, 0), thickness=1)
+            cv2.putText(board, str(i), (580, square_size*i), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(0, 0, 0), thickness=1)
 
         # Draw stones
         for stone in self.black_stones:
@@ -262,7 +260,7 @@ class GoVisual:
 # g.play(4,3)
 
 
-# # %%
+# %%
 # board = GoVisual(g)
 # res = board.current_position()
 # cv2.imshow("result", res)
@@ -299,3 +297,5 @@ class GoVisual:
 # # %%
 
 # # %%
+
+# %%
