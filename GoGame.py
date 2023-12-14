@@ -231,19 +231,26 @@ class GoGame:
         self.game.pss()
 
     def correct_stone(self, old_pos, new_pos):
-        x = ord(str(old_pos[0])) - 64
-        y = old_pos[1]
-        new_x = ord(str(new_pos[0])) - 64 + 1
-        new_y = new_pos[1] + 1
-        moves = self.get_moves()
-        for i in len(moves):
-            if moves[i].get_x()+1 == x and moves[i].get_y()+1 == y:
-                deleted_moves = self.get_moves()[i - len(self.get_moves()):]
-                self.step_up(len(moves) - i)
-                self.play(new_x,new_y)
-                for move in deleted_moves:
-                    x, y, color = move.get_x()+1, move.get_y()+1, move.get_stone().name
-                    self.game.play(x,y)
+        old_x = int(ord(str(old_pos[0])) - 64)
+        old_y = int(old_pos[1:]) 
+        print(self.get_moves())
+        new_x = int(ord(str(new_pos[0])) - 64 - 1)
+        new_y = int(new_pos[1:]) 
+        if old_pos[0] > "H":
+            old_x -= 1
+        for i in range(len(self.get_moves())):
+            if int(self.get_moves()[i].get_x()+1) == new_x and int(self.get_moves()[i].get_y()+1) == new_y:
+                print("This position is already occupied!")
+                return
+            else:
+                if int(self.get_moves()[i].get_x()+1) == old_x and int(self.get_moves()[i].get_y()+1) == old_y:
+                    deleted_moves = self.get_moves()[i - len(self.get_moves()):]
+                    self.game.step_up(len(self.get_moves()) - i)
+                    self.game.play(new_x, new_y)
+                    deleted_moves.pop(0)
+                    for move in deleted_moves:
+                        x, y, color = move.get_x()+1, move.get_y()+1, move.get_stone().name
+                        self.game.play(x,y)
 
     def get_moves(self):
         """
@@ -255,7 +262,7 @@ class GoGame:
             Cleaned sequence
         """
         moves = []
-        for move in self.get_sequence():
+        for move in self.game.get_sequence():
             if move.get_x() == 19 and move.get_y() == 19:
                 continue
             moves.append(move)
@@ -272,18 +279,7 @@ class GoGame:
         # Use the sente.sgf.dumps function to convert the game to SGF format
         return sente.sgf.dumps(self.game)
 
-# %%
-model = YOLO('model.pt')
-game = sente.Game()
-go_visual = GoVisual(game)
-go_board = GoBoard(model)
-g = GoGame(game, go_board, go_visual)
-# %%
-g.game.play(2,3)
-g.game.play(2,2)
-g.game.play(2,4)
-g.game.play(3,3)
-g.game.play(3,2)
+
 
 
 # %%
