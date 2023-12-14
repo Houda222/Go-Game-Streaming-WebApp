@@ -27,9 +27,13 @@
         </div>
     </div>
     <form method="POST" action="/" id="myForm">
-    <button class="btn bg custom-button btn-grand" type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</class=>
-    <button class="btn bg custom-button btn-grand" type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
-</form>
+        <button class="btn bg custom-button btn-grand" type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</class=>
+        <button class="btn bg custom-button btn-grand" type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
+    </form>
+    
+    <form method="post" action="/start" >
+        <button class="btn bg custom-button btn-grand" type="submit" >Commencer la partie</button>
+    </form>
 
     <form method="POST" action="/game" id="move">
         <button class="btn bg custom-button btn-petit" type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   premier</button>     
@@ -136,12 +140,12 @@
         // Mettre à jour le message toutes les 3 secondes (ajustez selon vos besoins)
         setInterval(updateMessage, 3000);
     </script>
-    <!--
     
     
-        <script src="{{ url_for('static',filename = 'script.js') }}"></script>
+    
+    <script src="{{ url_for('static',filename = 'script.js') }}"></script>
 
--->
+
 
    
 

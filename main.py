@@ -16,12 +16,7 @@ camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 
 
 model = YOLO('model.pt')
-game = sente.Game()
-go_visual = GoVisual(game)
-go_board = GoBoard(model)
-game = GoGame(game, go_board, go_visual)
 
-game_plot = np.ones((100, 100, 3), dtype=np.uint8) * 255
 usual_message = "camera is well fixed and everything is okay"
 message = "Il n'y a pas d'erreur "
 disabled_button = 'start-button'
@@ -31,7 +26,17 @@ ProcessFrame = None
 Process = True
 initialized = False
 sgf_text = None
+game= None
+new_game = True
 
+def nouvelle_partie():
+    global game,new_game
+    game = sente.Game()
+    go_visual = GoVisual(game)
+    go_board = GoBoard(model)
+    game = GoGame(game, go_board, go_visual)
+    game_plot = np.ones((100, 100, 3), dtype=np.uint8) * 255
+    new_game = True
 
 def processing_thread():
     """
@@ -42,7 +47,7 @@ def processing_thread():
         Send error to message if there is one
         """
     
-    global ProcessFrame, Process, game_plot, message,initialized,sgf_text
+    global ProcessFrame, Process, game_plot, message,initialized,sgf_text,new_game
 
     while Process:
         if not ProcessFrame is None:
@@ -173,7 +178,6 @@ def change_place():
         """
     old_pos = request.form['input1']
     new_pos = request.form['input2']
-    print("###################")
     game.correct_stone(old_pos,new_pos)
     return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
@@ -220,6 +224,15 @@ def credit():
         """
     return render_template("credits.html")
 
+@app.route('/start', methods=['POST'])
+def start():
+    """
+        Route to start a new game
+        """
+    nouvelle_partie()
+    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
+
+
 @app.route('/Historique')
 def historique():
     """
@@ -228,6 +241,7 @@ def historique():
     return render_template("Historique.html")
 
 if __name__ == '__main__':
+    nouvelle_partie()
     process_thread = threading.Thread(target=processing_thread, args=())
     process_thread.start()
     app.run(debug=False)
