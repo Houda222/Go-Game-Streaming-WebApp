@@ -37,7 +37,7 @@ def New_game():
     game = sente.Game()
     go_visual = GoVisual(game)
     go_board = GoBoard(model)
-    game = GoGame(game, go_board, go_visual)
+    game = GoGame(game, go_board, go_visual,True)
     game_plot = np.ones((100, 100, 3), dtype=np.uint8) * 255
     new_game = True
     initialized = False

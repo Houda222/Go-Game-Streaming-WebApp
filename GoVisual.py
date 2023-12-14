@@ -4,6 +4,7 @@ import cv2
 from GoGame import *
 from GoBoard import *
 import sente
+# %%
 
 class GoVisual:
     """
@@ -27,8 +28,8 @@ class GoVisual:
         self.board_size = 19
         self.last_move = None
         self.cursor = len(self.get_moves())
-        self.track_progress = True
-        # self.black_stones, self.white_stones = self.get_stones(self.game.numpy(["black_stones", "white_stones"]))
+        self.track_progress = True    
+    
 
     def get_stones(self, board):
         """
@@ -252,9 +253,26 @@ class GoVisual:
             Tuple: A tuple containing the current position on the board.
         """
         self.game = sente.sgf.load(sgf_url)
-        print("loading done")
         self.game.play_sequence(self.game.get_default_sequence())
-        print(self.game.get_sequence())
         return self.current_position()
 
-    
+    def draw_transparent(self, detected_state):
+        """
+        Draw the board without taking into account game rules. Show exactly what's on the board.
+        This makes using previous and next impossible.
+
+        Args:
+            detected_state: numpy.ndarray
+            the current state of the board: the stones and their positions stored in a 19x19x2 board like the sente.Board19
+        
+        Returns:
+            numpy.ndarray
+            The visual board to plot
+        """
+        black_stones, white_stones = self.get_stones(detected_state)
+        return self.drawBoard(black_stones, white_stones)
+        
+
+
+
+
