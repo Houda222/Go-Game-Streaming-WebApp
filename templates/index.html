@@ -14,7 +14,7 @@
     <div class="container-fluid text-center bg custom-fond">
         <div class="row text-danger">
             <div class="col-5 custom-fond"> 
-                <a href = "{{ url_for('summary') }}"><button class="btn bg custom-button btn-grand">
+                <a href = "{{ url_for('sommaire') }}"><button class="btn bg custom-button btn-grand">
                     Retour
                 </button></a>
             </div>
@@ -27,15 +27,15 @@
         </div>
     </div>
     <form method="POST" action="/" id="myForm">
-    <button type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</button>
-    <button type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
+    <button class="btn bg custom-button btn-grand" type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</class=>
+    <button class="btn bg custom-button btn-grand" type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
 </form>
 
     <form method="POST" action="/game" id="move">
-        <button type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   premier;</button>     
-        <button type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   precedent;</button>     
-        <button type="submit" id="start-button2" name="psw2" value="4" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   suivant;</button>     
-        <button type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   dernier;</button>     
+        <button class="btn bg custom-button btn-petit" type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   premier</button>     
+        <button class="btn bg custom-button btn-petit" type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   precedent</button>     
+        <button class="btn bg custom-button btn-petit" type="submit" id="start-button2" name="psw2" value="4" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   suivant</button>     
+        <button class="btn bg custom-button btn-petit" type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   dernier</button>     
         
     </form>
     

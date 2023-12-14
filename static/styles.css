@@ -18,6 +18,10 @@ body {
 .custom-fond { background-color: rgb(132, 206, 234); }
 .custom-button { background-color: rgb(202, 202, 202); }
 
+.btn-petit{
+  font-size: 12px;
+  padding: 7px 15px;
+}
 .btn-grand {
   font-size: 24px;
   padding: 15px 30px;

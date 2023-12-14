@@ -173,6 +173,7 @@ def change_place():
         """
     old_pos = request.form['input1']
     new_pos = request.form['input2']
+    print("###################")
     game.correct_stone(old_pos,new_pos)
     return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
@@ -194,7 +195,7 @@ def process():
     return "Fichier traité avec succès"
 
 @app.route('/Sommaire')
-def summary():
+def sommaire():
     """
         Route to get to the summary page
         """
@@ -215,7 +216,7 @@ def credit():
     return render_template("credits.html")
 
 @app.route('/Historique')
-def historic():
+def historique():
     """
         Route to get to the summary page
         """
