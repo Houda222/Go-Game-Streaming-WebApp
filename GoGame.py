@@ -1,11 +1,7 @@
 #%%
 from GoVisual import *
 import sente
-from ultralytics import YOLO
-import cv2
-from GoGame import *
-from GoBoard import *
-from GoVisual import *
+
 
 
 class GoGame:
@@ -234,7 +230,7 @@ class GoGame:
         old_x = int(ord(str(old_pos[0])) - 64)
         old_y = int(old_pos[1:]) 
         print(self.get_moves())
-        new_x = int(ord(str(new_pos[0])) - 64 - 1)
+        new_x = int(ord(str(new_pos[0])) - 64)
         new_y = int(new_pos[1:]) 
         if old_pos[0] > "H":
             old_x -= 1
@@ -244,6 +240,7 @@ class GoGame:
                 return
             else:
                 if int(self.get_moves()[i].get_x()+1) == old_x and int(self.get_moves()[i].get_y()+1) == old_y:
+                    print("Found!")
                     deleted_moves = self.get_moves()[i - len(self.get_moves()):]
                     self.game.step_up(len(self.get_moves()) - i)
                     self.game.play(new_x, new_y)
@@ -280,6 +277,3 @@ class GoGame:
         return sente.sgf.dumps(self.game)
 
 
-
-
-# %%
