@@ -1,5 +1,25 @@
 body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background-color: rgba(81, 81, 79, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.centered-image {
+  max-width: 100%;
+  max-height: 100%;
+  opacity: 0.5;
+}
+
+.bleu_ciel {
   background-color: skyblue; /* Couleur de fond bleu ciel */
+}
+
+.gris{
+  background-color: rgba(81, 81, 79, 0);
 }
 
 .logo_tenuki {
@@ -7,17 +27,29 @@ body {
   top: 10px; /* Distance depuis le haut en pixels */
   left: 10px; /* Distance depuis la gauche en pixels */
 }
+
 .logo {
   width: 15%;
 }
 
-
+background{
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background-image: url('jeu-de-go.jpeg'); /* Image en fond */
+  background-size: cover;
+  background-position: center;
+}
 
 
 
 .custom-fond { background-color: rgb(132, 206, 234); }
 .custom-button { background-color: rgb(202, 202, 202); }
 
+.btn-petit{
+  font-size: 12px;
+  padding: 7px 15px;
+}
 .btn-grand {
   font-size: 24px;
   padding: 15px 30px;

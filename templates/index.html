@@ -26,22 +26,24 @@
             </div>
         </div>
     </div>
-    <form method="POST" action="/" id="myForm">
-    <button type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</button>
-    <button type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
-</form>
+    <div class="container-fluid text-center bg custom-fond">
+        <form method="POST" action="/" id="myForm">
+            <button class="btn bg custom-button btn-grand" type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</button>
+            <button class="btn bg custom-button btn-grand" type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
+        </form>
+    <div class="container-fluid text-center bg custom-fond">
 
     <form method="POST" action="/game" id="move">
-        <button type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   premier;</button>     
-        <button type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   precedent;</button>     
-        <button type="submit" id="start-button2" name="psw2" value="4" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   suivant;</button>     
-        <button type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   dernier;</button>     
+        <button class="btn bg custom-button btn-petit" type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   premier</button>     
+        <button class="btn bg custom-button btn-petit" type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   precedent</button>     
+        <button class="btn bg custom-button btn-petit" type="submit" id="start-button2" name="psw2" value="4" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   suivant</button>     
+        <button class="btn bg custom-button btn-petit" type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   dernier</button>     
         
     </form>
     
     <form method="POST" action="/rules" id="check">
         <input type="checkbox" id="rules" name="psw3" value="6" {% if check == 'True' %}checked{% endif %} >
-        <label for="rules">Appliquer le module des règles</label>
+        <label for="rules">Respect des règles strict imposé</label>
     </form>
 
     <form method="POST" action="/change_place" id="change">
@@ -55,7 +57,7 @@
 
         <br>
 
-        <button type="submit">Soumettre le changement</button>
+        <button type="submit">Valider</button>
     </form>
 
     <button onclick="downloadFile()">Télécharger le fichier</button>
