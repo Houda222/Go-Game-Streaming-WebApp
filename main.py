@@ -29,6 +29,8 @@ sgf_text = None
 game= None
 new_game = True
 
+
+
 def nouvelle_partie():
     global game,new_game, initialized
     game = sente.Game()
@@ -38,7 +40,7 @@ def nouvelle_partie():
     game_plot = np.ones((100, 100, 3), dtype=np.uint8) * 255
     new_game = True
     initialized = False
-    open_camera()
+    # open_camera()
 
 def processing_thread():
     """
@@ -50,7 +52,6 @@ def processing_thread():
         """
     
     global ProcessFrame, Process, game_plot, message,initialized,sgf_text,new_game
-    print(Process)
     while Process:
         if not ProcessFrame is None:
             try:
@@ -119,7 +120,7 @@ def generate_frames():
         Returns:
             Image
         """
-    global ProcessFrame
+    global ProcessFrame,camera
     while True:  
               
         success, frame = camera.read()  # Read the image from the camera
@@ -244,9 +245,6 @@ def start():
 
 @app.route('/Historique')
 def historique():
-    
-    
-    
     """
         Route to get to the summary page
         """
