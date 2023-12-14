@@ -253,11 +253,6 @@ def historique():
     return render_template("Historique.html")
 
 if __name__ == '__main__':
-<<<<<<< Updated upstream
-=======
-    
-    
->>>>>>> Stashed changes
     nouvelle_partie()
     process_thread = threading.Thread(target=processing_thread, args=())
     process_thread.start()
