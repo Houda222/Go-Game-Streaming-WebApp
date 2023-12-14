@@ -33,34 +33,66 @@
             <button class="btn bg custom-button btn-grand" type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</button>
             <button class="btn bg custom-button btn-grand" type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
         </form>
+    </div>
     <div class="container-fluid text-center bg custom-fond">
+        <div class="row">
+            <div class="col-1"></div>
+            <div id="video-container">
+                <img id="camera-feed" src="{{ url_for('video_feed') }}" alt="Camera Feed"></img>
+            </div>
+            <div class="col-1"></div>
+            <div id="image">
+                <img id="image" src="" alt="Image"></img>
+                <form method="POST" action="/game" id="move">
+                    <button class="btn bg custom-button btn-petit" type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>  &lt;&lt; </button>     
+                    <button class="btn bg custom-button btn-petit" type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   &lt; </button>     
+                    <button class="btn bg custom-button btn-petit" type="submit" id="start-button2" name="psw2" value="4" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   &gt; </button>     
+                    <button class="btn bg custom-button btn-petit" type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   &gt;&gt; </button>
+                </form>
+                <div class="col-1"></div>
+            </div>
+        </div>
+    </div>
+    </br>
+    <div class="container-fluid text-center bg custom-fond">
+        <div id="message">
+            {{ message }}
+        </div>
+    </div>
 
-    <form method="POST" action="/game" id="move">
-        <button class="btn bg custom-button btn-petit" type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   premier</button>     
-        <button class="btn bg custom-button btn-petit" type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   precedent</button>     
-        <button class="btn bg custom-button btn-petit" type="submit" id="start-button2" name="psw2" value="4" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   suivant</button>     
-        <button class="btn bg custom-button btn-petit" type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   dernier</button>     
-        
-    </form>
+    <script>
+        function updateMessage() {
+            $.get('/update', function(data) {
+                // Mettre à jour le contenu de #message avec le nouveau message
+                $('#message').text(data.message);
+                $('#image img').attr('src', 'data:image/jpeg;base64,' + data.image);
+                
+            });
+        }
     
-    <form method="POST" action="/rules" id="check">
-        <input type="checkbox" id="rules" name="psw3" value="6" {% if check == 'True' %}checked{% endif %} >
-        <label for="rules">Respect des règles strict imposé</label>
-    </form>
+        // Mettre à jour le message toutes les 3 secondes (ajustez selon vos besoins)
+        setInterval(updateMessage, 3000);
+    </script>
+    
+    </br>
+    </br>
+    </br>
+    
+    <div class="container-fluid text-center bg custom-fond">
+        <form method="POST" action="/rules" id="check">
+            <input type="checkbox" id="rules" name="psw3" value="6" {% if check == 'True' %}checked{% endif %} >
+            <label for="rules">Respect des règles strict imposé</label>
+        </form>
 
-    <form method="POST" action="/change_place" id="change">
-        <label for="input1">Champ 1 :</label>
-        <input type="text" id="input1" name="input1" placeholder="Entrez l'ancien emplacement de la pièce">
-
-        <br>
-
-        <label for="input2">Champ 2 :</label>
-        <input type="text" id="input2" name="input2" placeholder="Entrez le nouveau emplacement de la pièce">
-
-        <br>
-
-        <button type="submit">Valider</button>
-    </form>
+        <form method="POST" action="/change_place" id="change">
+            <label for="input1">Champ 1 :</label>
+            <input type="text" id="input1" name="input1" placeholder="Entrez l'ancien emplacement de la pièce">
+            <br>
+            <label for="input2">Champ 2 :</label>
+            <input type="text" id="input2" name="input2" placeholder="Entrez le nouveau emplacement de la pièce">
+            <br>
+            <button type="submit">Valider</button>
+        </form>
 
     <button onclick="downloadFile()">Télécharger le fichier</button>
 
@@ -97,25 +129,6 @@
     </script>
 
     
-  
-    <style>
-        #video-container, #image {
-            float: left;
-            width: 30%; /* Chaque div prend la moitié de la largeur */
-            box-sizing: border-box; /* Inclut la bordure et le padding dans la largeur */
-            margin-right: 10px; /* Ajustez la marge selon vos besoins */
-        }
-
-        #camera-feed, #image img {
-            width: 100%; /* Les images occupent la largeur complète de leur parent */
-            height: auto; /* Maintient le ratio d'aspect original */
-        }
-
-        #message {
-            clear: both; /* Empêche les éléments suivants de flotter à gauche ou à droite des div flottantes */
-            margin-top: 10px; /* Ajoute de l'espace entre le message et les div précédentes */
-        }
-    </style>
     <div id="video-container">
         <img id="camera-feed" src="{{ url_for('video_feed') }}" alt="Camera Feed">
     </div>
