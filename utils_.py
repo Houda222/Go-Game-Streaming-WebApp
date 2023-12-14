@@ -502,34 +502,13 @@ def lines_detection(model_results, perspective_matrix):
     --------
     Tuple of two numpy.ndarrays representing clustered vertical and horizontal lines.
     """
-
-    empty_intersections = model_results[0].boxes.xywh[model_results[0].boxes.cls == 3][:,[0, 1]]
-    empty_corner = model_results[0].boxes.xywh[model_results[0].boxes.cls == 4][:,[0, 1]]
-    empty_edge = model_results[0].boxes.xywh[model_results[0].boxes.cls == 5][:,[0, 1]]
-
-
-    if not empty_intersections is None:
-        if len(empty_intersections) != 0:
-            empty_intersections = np.array(empty_intersections[:, [0, 1]])
-            empty_intersections = cv2.perspectiveTransform(empty_intersections.reshape((1, -1, 2)), perspective_matrix).reshape((-1, 2))
-
-    if not empty_corner is None:
-        if len(empty_corner) != 0:
-            empty_corner = np.array(empty_corner[:, [0, 1]])
-            empty_corner = cv2.perspectiveTransform(empty_corner.reshape((1, -1, 2)), perspective_matrix).reshape((-1, 2))
-
-    if not empty_edge is None:
-        if len(empty_edge) != 0:
-            empty_edge = np.array(empty_edge[:, [0, 1]])
-            empty_edge = cv2.perspectiveTransform(empty_edge.reshape((1, -1, 2)), perspective_matrix).reshape((-1, 2))
+    empty_intersections = get_key_points(model_results, 3, perspective_matrix)
+    empty_corner = get_key_points(model_results, 4, perspective_matrix)
+    empty_edge = get_key_points(model_results, 5, perspective_matrix)
 
     all_intersections = np.concatenate((empty_intersections, empty_corner, empty_edge), axis=0)
 
-    all_intersections = all_intersections[(all_intersections[:, 0:2] >= 0).all(axis=1) & (all_intersections[:, 0:2] <= 600).all(axis=1)]
-
-
     all_intersections = all_intersections[all_intersections[:, 0].argsort()]
-
     all_intersections_x = all_intersections[:,0].reshape((-1, 1))
 
     kmeans = KMeans(n_clusters=19, n_init=10)
@@ -548,20 +527,17 @@ def lines_detection(model_results, perspective_matrix):
     lines_points_length = np.array([])
     cluster_vertical = np.array([]).reshape((-1, 4))
 
-    for i, label in enumerate(sorted_unique_labels):
+    for label in sorted_unique_labels:
         line = all_intersections[cluster_labels==label]
-        # print(i, len(line), line)
-        # draw_points(line.astype(int), img)
         if len(line) > 2:
-            # line = line[np.argsort(line[:, 1])]
             slope, intercept = np.polyfit(line[:,1], line[:,0], 1) # on inverse x et y
             line_ = np.array([intercept, 0, slope * 600 + intercept, 600])# on iverse les x et y
             lines_equations = np.append(lines_equations, [[slope, intercept]], axis=0)
         else:
             if len(cluster_vertical) == 0:
-                raise Exception(f">>>>>> Cannot reconstruct ALL VERTICAL LINES")
+                raise Exception(f"BoardDetectionException: Unable to reconstruct ALL VERTICAL LINES")
             elif len(line) < 1:
-                raise Exception(f">>>>>> Cannot reconstruct vertical line at point {line}")
+                raise Exception(f"BoardDetectionException: Unable to reconstruct vertical line at point {line}")
             else:
                 x1, y1 = line[0]
                 slope = np.average(lines_equations[:,0], weights=lines_points_length, axis=0)
@@ -569,12 +545,9 @@ def lines_detection(model_results, perspective_matrix):
                 line_ = np.array([intercept, 0, slope * 600 + intercept, 600])
                 lines_equations = np.append(lines_equations, [[slope, intercept]], axis=0)
         lines_points_length = np.append(lines_points_length, [len(line)], axis=0)
-        
-        # x1, y1, x2, y2 = line_.astype(np.uint32)
-        # cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 1)
-        # draw_points([(x1, y1), (x2, y2)], img)
-        
+
         cluster_vertical = np.append(cluster_vertical, [line_], axis=0)
+    
     cluster_vertical = adress_lines(cluster_vertical)
     cluster_vertical = np.sort(cluster_vertical, axis=0).astype(int)
 
@@ -608,9 +581,9 @@ def lines_detection(model_results, perspective_matrix):
             lines_equations = np.append(lines_equations, [[slope, intercept]], axis=0)
         else:
             if len(cluster_horizontal) == 0:
-                raise Exception(f">>>>>> Cannot reconstruct ALL HORIZONTAL LINES")
+                raise Exception(f"BoardDetectionException: Unable to reconstruct ALL HORIZONTAL LINES")
             elif len(line) < 1:
-                raise Exception(f">>>>>> Cannot reconstruct line at point {line}")
+                raise Exception(f"BoardDetectionException: Unable to reconstruct line at point {line}")
             else:
                 x1, y1 = line[0]
                 slope = np.average(lines_equations[:,0], weights=lines_points_length, axis=0)
@@ -618,11 +591,9 @@ def lines_detection(model_results, perspective_matrix):
                 line = np.array([0, intercept, 600, slope * 600 + intercept])
                 lines_equations = np.append(lines_equations, [[slope, intercept]], axis=0)
         lines_points_length = np.append(lines_points_length, [len(line)], axis=0)
-        
-        # x1, y1, x2, y2 = line.astype(int)
-        # cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 1)
-        # draw_points([(x1, y1), (x2, y2)], img)
+
         cluster_horizontal = np.append(cluster_horizontal, [line], axis=0)
+    
     cluster_horizontal = adress_lines(cluster_horizontal)
     cluster_horizontal = np.sort(cluster_horizontal, axis=0).astype(int)
  
@@ -666,7 +637,7 @@ def get_corners_inside_box(corners_boxes, board_box):
     # Select corners_boxes that meet the condition
     return corners_boxes[condition]
         
-def get_corners(results):
+def get_corners(results, padding=None):
     """
     Extract and arrange four corners from object detection results.
 
@@ -694,23 +665,23 @@ def get_corners(results):
 
     """
     
-    corners_boxes = np.array(results[0].boxes.xyxy[results[0].boxes.cls == 2])
+    corner_boxes = np.array(results[0].boxes.xyxy[results[0].boxes.cls == 2])
     
-    if len(corners_boxes) < 4:
-        raise Exception(f">>>>Incorrect number of corners! Detected {len(corners_boxes)} corners")
+    if len(corner_boxes) < 4:
+        raise Exception(f">>>>Incorrect number of corners! Detected {len(corner_boxes)} corners")
 
 
-    corners_boxes_ = non_max_suppression(corners_boxes)
+    corner_boxes_ = non_max_suppression(corner_boxes)
 
-    board_model_edges = results[0].boxes.xyxy[results[0].boxes.cls == 1][0]
+    model_board_edges = results[0].boxes.xyxy[results[0].boxes.cls == 1][0]
     
-    corners_boxes = get_corners_inside_box(corners_boxes_, np.array(board_model_edges))
+    corner_boxes = get_corners_inside_box(corner_boxes_, np.array(model_board_edges))
 
-    if len(corners_boxes) != 4:
-        raise Exception(f">>>>Incorrect number of corners! Detected {len(corners_boxes)} corners and {len(corners_boxes_)} corners with NMS")
+    if len(corner_boxes) != 4:
+        raise Exception(f">>>>Incorrect number of corners! Detected {len(corner_boxes)} corners and {len(corner_boxes_)} corners with NMS")
 
-    corner_centers = ((corners_boxes[:,[0, 1]] + corners_boxes[:,[2, 3]])/2)
-
+    corner_centers = ((corner_boxes[:,[0, 1]] + corner_boxes[:,[2, 3]])/2)
+    
     corner_centers = corner_centers[corner_centers[:, 1].argsort()]
     
     upper = corner_centers[:2]
@@ -719,7 +690,15 @@ def get_corners(results):
     upper = upper[upper[:, 0].argsort()]
     lower = lower[lower[:, 0].argsort()[::-1]]
     
-    return np.concatenate((upper, lower)).astype(dtype=np.float32)
+    corner_centers = np.concatenate((upper, lower)).astype(dtype=np.float32)
+    
+    if not padding is None:
+        corner_centers[0] += np.array([-padding, -padding])
+        corner_centers[1] += np.array([padding, -padding])
+        corner_centers[2] += np.array([padding, padding])
+        corner_centers[3] += np.array([-padding, padding])
+    
+    return corner_centers
 
 def get_key_points(results, class_, perspective_matrix, output_edge=600):
     """
@@ -858,22 +837,22 @@ def line_distance(line1, line2):
     return (np.linalg.norm(line1[:2]-line2[:2]) + np.linalg.norm(line1[2:]-line2[2:])) / 2
 
 
-def calculate_distances(lines):
-    """
-    Calculate the distances between consecutive pairs of lines.
+# def calculate_distances(lines):
+#     """
+#     Calculate the distances between consecutive pairs of lines.
 
-    Parameters:
-    -----------
-    lines : list
-        List of arrays, each representing the endpoints of a line segment.
+#     Parameters:
+#     -----------
+#     lines : list
+#         List of arrays, each representing the endpoints of a line segment.
 
-    Returns:
-    -----------
-    list
-        List of distances between consecutive pairs of lines.
+#     Returns:
+#     -----------
+#     list
+#         List of distances between consecutive pairs of lines.
 
-    """
-    return [line_distance(lines[i + 1], lines[i]) for i in range(len(lines) - 1)]
+#     """
+#     return [line_distance(lines[i + 1], lines[i]) for i in range(len(lines) - 1)]
 
 def average_distance(lines):
     """

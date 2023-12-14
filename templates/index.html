@@ -5,7 +5,8 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename = 'styles.css') }}">
     <!--<script  rel="stylesheet" type="text/css" src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>    <meta charset="UTF-8">-->>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
@@ -13,7 +14,7 @@
     <div class="container-fluid text-center bg custom-fond">
         <div class="row text-danger">
             <div class="col-5 custom-fond"> 
-                <a href = "{{ url_for('sommaire') }}"><button class="btn bg custom-button btn-grand">
+                <a href = "{{ url_for('summary') }}"><button class="btn bg custom-button btn-grand">
                     Retour
                 </button></a>
             </div>
@@ -56,6 +57,32 @@
 
         <button type="submit">Soumettre le changement</button>
     </form>
+
+    <button onclick="downloadFile()">Télécharger le fichier</button>
+
+    <h1>Upload de fichier texte</h1>
+    <form method="POST" action="/process" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".txt">
+        <input type="submit" value="Uploader">
+    </form>
+    
+    <script>
+        function downloadFile() {
+            // Requête AJAX pour obtenir le contenu du fichier depuis le serveur
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/get_file_content', true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Créer un blob avec le contenu du fichier
+                    var blob = new Blob([xhr.responseText], { type: 'text/plain' });
+                    
+                    // Utiliser FileSaver.js pour télécharger le fichier
+                    saveAs(blob, 'nom_du_fichier.txt');
+                }
+            };
+            xhr.send();
+        }
+    </script>
 
     <script>
         document.getElementById('rules').addEventListener('change', function() {

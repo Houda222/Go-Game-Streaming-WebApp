@@ -1,5 +1,11 @@
+#%%
 from GoVisual import *
 import sente
+from ultralytics import YOLO
+import cv2
+from GoGame import *
+from GoBoard import *
+from GoVisual import *
 
 
 class GoGame:
@@ -78,9 +84,8 @@ class GoGame:
         if not self.game.get_active_player().name == current_player:
             self.game.pss()
 
-        # Return the current position on the board and the SGF representation of the game
         return self.go_visual.current_position(), self.get_sgf()
-
+        # return self.main_loop(frame)
     
     
     def main_loop(self, frame):
@@ -103,11 +108,8 @@ class GoGame:
         self.board_detect.process_frame(frame)
 
         self.define_new_move()
-
-        # Return the current position on the board and the SGF representation of the game
-        # return self.go_visual.current_position(), self.get_sgf()
+        
         return self.go_visual.current_position(), self.get_sgf()
-
     
     def play_move(self, x, y, stone_color):
         """
@@ -130,7 +132,7 @@ class GoGame:
 
         except sente.exceptions.IllegalMoveException as e:
             # Handle different types of illegal move exceptions and raise a custom Exception with details
-            error_message = f"A violation of go game rules has been found in position {x}, {y}\n"
+            error_message = f"[GoGame Exception] - A violation of go game rules has been found in position {x}, {y}\n"
 
             if "self-capture" in str(e):
                 raise Exception(error_message + f" --> {color} stone at this position results in self-capture")
@@ -171,19 +173,21 @@ class GoGame:
 
         # Handle the case where more than one stone was added
         if len(black_stone_indices) + len(white_stone_indices) > 1:
-            print("More than one stone was added!")
+            print("[GoGame Log] - More than one stone was added!")
             return
 
         # Play a move for a newly added black stone
         if len(black_stone_indices) != 0:
             self.play_move(black_stone_indices[0][0] + 1, black_stone_indices[0][1] + 1, 1)  # 1 is black_stone
             self.moves.append(('B', (black_stone_indices[0][0], 18 - black_stone_indices[0][1])))
+            print(f"[GoGame Log] - Black stone was played at ({black_stone_indices[0][0], 18 - black_stone_indices[0][1]})")
             return
 
         # Play a move for a newly added white stone
         if len(white_stone_indices) != 0:
             self.play_move(white_stone_indices[0][0] + 1, white_stone_indices[0][1] + 1, 2)  # 2 is white_stone
             self.moves.append(('W', (white_stone_indices[0][0], 18 - white_stone_indices[0][1])))
+            print(f"[GoGame Log] - White stone was played at ({white_stone_indices[0][0], 18 - white_stone_indices[0][1]})")
             return
 
         # Print a message if no moves were detected
@@ -212,7 +216,7 @@ class GoGame:
 
         # Play moves for black stones
         for stone in black_stone_indices:
-            self.play_move(stone[0] + 1, stone[1] + 1,1)
+            self.play_move(stone[0] + 1, stone[1] + 1, 1)
             self.game.pss()
 
         # Pass a turn after playing all black stones
@@ -220,13 +224,51 @@ class GoGame:
 
         # Play moves for white stones
         for stone in white_stone_indices:
-            self.play_move(stone[0] + 1, stone[1] + 1,2)
+            self.play_move(stone[0] + 1, stone[1] + 1, 2)
             self.game.pss()
 
         # Pass a turn after playing all white stones
         self.game.pss()
 
-            
+    def correct_stone(self, old_pos, new_pos):
+        old_x = int(ord(str(old_pos[0])) - 64)
+        old_y = int(old_pos[1:]) 
+        print(self.get_moves())
+        new_x = int(ord(str(new_pos[0])) - 64 - 1)
+        new_y = int(new_pos[1:]) 
+        if old_pos[0] > "H":
+            old_x -= 1
+        for i in range(len(self.get_moves())):
+            if int(self.get_moves()[i].get_x()+1) == new_x and int(self.get_moves()[i].get_y()+1) == new_y:
+                print("This position is already occupied!")
+                return
+            else:
+                if int(self.get_moves()[i].get_x()+1) == old_x and int(self.get_moves()[i].get_y()+1) == old_y:
+                    deleted_moves = self.get_moves()[i - len(self.get_moves()):]
+                    self.game.step_up(len(self.get_moves()) - i)
+                    self.game.play(new_x, new_y)
+                    deleted_moves.pop(0)
+                    for move in deleted_moves:
+                        x, y, color = move.get_x()+1, move.get_y()+1, move.get_stone().name
+                        self.game.play(x,y)
+
+    def get_moves(self):
+        """
+        Remove pass move; when we use game.pss(), a move named "u19" is added to the sequence. 
+
+        Returns:
+        --------
+        moves: List
+            Cleaned sequence
+        """
+        moves = []
+        for move in self.game.get_sequence():
+            if move.get_x() == 19 and move.get_y() == 19:
+                continue
+            moves.append(move)
+        return moves
+
+
     def get_sgf(self):
         """
         Get the SGF (Smart Game Format) representation of the current game.
@@ -236,5 +278,8 @@ class GoGame:
         """
         # Use the sente.sgf.dumps function to convert the game to SGF format
         return sente.sgf.dumps(self.game)
+
+
+
 
 # %%
