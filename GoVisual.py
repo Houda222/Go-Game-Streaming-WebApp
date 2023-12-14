@@ -1,7 +1,8 @@
 #%%
 import numpy as np
 import cv2
-
+from GoGame import *
+from GoBoard import *
 
 class GoVisual:
     """
@@ -37,15 +38,15 @@ class GoVisual:
             A Sequence of moves provided by Sente
 
         """
-        self.black_stones = []
-        self.white_stones = []
+        black_stones = []
+        white_stones = []
         for i in range(board.shape[0]):
             for j in range(board.shape[1]):
                 if np.array_equal(board[i, j], [1, 0]):  # Black stone
                     self.black_stones.append((i, j))
                 elif np.array_equal(board[i, j], [0, 1]):  # White stone
                     self.white_stones.append((i, j))
-    
+        return black_stones, white_stones
 
     def update_param(self):
         """
@@ -69,7 +70,7 @@ class GoVisual:
         if self.cursor - len(self.get_moves()) != 0:
             deleted_moves = self.get_moves()[self.cursor - len(self.get_moves()):]
         self.game.step_up(len(self.get_moves()) - self.cursor)
-        self.get_stones(self.game.numpy(["black_stones", "white_stones"]))        
+        black_stones, white_stones = self.get_stones(self.game.numpy(["black_stones", "white_stones"]))        
         
         if self.get_moves() != []:
             self.last_move = self.get_moves()[-1]
@@ -77,6 +78,7 @@ class GoVisual:
         for move in deleted_moves:
                 x, y, color = move.get_x()+1, move.get_y()+1, move.get_stone().name
                 self.game.play(x,y)
+        return black_stones, white_stones
 
     def get_moves(self):
         """
@@ -175,11 +177,11 @@ class GoVisual:
             self.cursor = len(self.get_moves())
         # print("cursor", self.cursor)
         # print("total", len(self.get_moves()))
-        self.update_param()
-        return self.drawBoard()
+        black_stones, white_stones = self.update_param()
+        return self.drawBoard(black_stones, white_stones)
 
 
-    def drawBoard(self):
+    def drawBoard(self, black_stones, white_stones):
         """
         Draw the board of the Go game
 
@@ -201,33 +203,25 @@ class GoVisual:
         board =np.full(((self.board_size+1)*square_size, (self.board_size+1)*square_size, 3), (69, 166, 245), dtype=np.uint8)
         board2 = np.zeros((self.board_size, self.board_size))
         
-        # Draw lines for the board grid
-        
-        # for i in range(board_size):
-        #     ax.plot([i, i], [0, board_size - 1], color='k', linewidth = 0.7)
-        #     ax.plot([0, board_size - 1], [i, i], color='k', linewidth = 0.7)
-        
         for i in range(1, self.board_size+1):
             # Vertical lines and letters
             cv2.line(board, (square_size*i, square_size), (square_size*i, square_size*(self.board_size)), (0, 0, 0), thickness=1)
-            #plt.text(i, -0.8, chr(97 + i), fontsize=8, color='black')    
             cv2.putText(board, chr(ord('A') + i-1), (square_size*i, 15), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(0, 0, 0), thickness=1)
             cv2.putText(board, chr(ord('A') + i-1), (square_size*i, 585), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(0, 0, 0), thickness=1)
 
             # Horizontal lines and letters
             cv2.line(board, (square_size, square_size*i), (square_size*(self.board_size), square_size*i), (0, 0, 0), thickness=1)
-            #plt.text(-0.8, i, chr(97 + i), fontsize=8, color='black')  
             cv2.putText(board, str(i), (5, square_size*i), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(0, 0, 0), thickness=1)
             cv2.putText(board, str(i), (580, square_size*i), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(0, 0, 0), thickness=1)
 
         # Draw stones
-        for stone in self.black_stones:
+        for stone in black_stones:
             row, col = stone
             board2[row, col] = 1
             cv2.circle(board, ((row+1)*square_size, (col+1)*square_size), circle_radius, color=(66, 66, 66), thickness=2) # draw the edge
             cv2.circle(board, ((row+1)*square_size, (col+1)*square_size), circle_radius, color=(0, 0, 0), thickness=-1) # draw the stone
 
-        for stone in self.white_stones:
+        for stone in white_stones:
             row, col = stone
             board2[row, col] = 1
             cv2.circle(board, ((row+1)*square_size, (col+1)*square_size), circle_radius, color=(66, 66, 66), thickness=2) # draw the edge
@@ -242,60 +236,28 @@ class GoVisual:
 
         return board
 
+    # def draw_from_sgf(self, sgf_url):
+    #     with open(sgf_url, 'rb') as f:
+    #         sgf_content = f.read()
+
+    #     # Load an sgf file/ the game
+    #     sgf_game = Sgf_game.from_bytes(sgf_content)
+
+    #     # Extract the game moves
+    #     black_stones = []
+    #     white_stones = []
+    #     for node in sgf_game.get_main_sequence():
+    #         color, move = node.get_move()
+    #         if color is not None and move is not None:
+    #             if color == 'b':
+    #                 row, col = move
+    #                 black_stones.append((row, col)) 
+    #             else:
+    #                 row, col = move
+    #                 white_stones.append((row, col))
+
+    #     self.drawBoard(black_stones, white_stones)
     
-    
-# # %%
-# #Example of usage
-# import sente
-
-# g = sente.Game()
-# g.play(2,3)
-# g.play(2,2)
-# g.play(2,4)
-# g.play(3,3)
-# g.play(3,2)
-# g.play(18,18)
-# g.play(3,4)
-# g.play(17,5)
-# g.play(4,3)
-
-
-# %%
-# board = GoVisual(g)
-# res = board.current_position()
-# cv2.imshow("result", res)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-# #%%
-# g.play(4,10)
-# #%%
-# g.play(10,10)
-# # %%
-# board.previous()
-
-
-
-# # %%
-# res = board.current_position()
-# cv2.imshow("result", res)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-# # %%
-# board.next()
-
-
-# # %%
-# res = board.current_position()
-# cv2.imshow("result", res)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-# # %%
-# board.final_position()
-
-# # %%
-# board.initial_position()
-# # %%
-
-# # %%
+#%%
 
 # %%
