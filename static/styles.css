@@ -29,19 +29,8 @@ body {
 }
 
 .logo {
-  width: 15%;
+  width: 80%;
 }
-
-background{
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  background-image: url('jeu-de-go.jpeg'); /* Image en fond */
-  background-size: cover;
-  background-position: center;
-}
-
-
 
 .custom-fond { background-color: rgb(132, 206, 234); }
 .custom-button { background-color: rgb(202, 202, 202); }
