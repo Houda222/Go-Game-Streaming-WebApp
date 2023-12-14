@@ -206,6 +206,11 @@ def index2():
     """
         Route to get to the index page
         """
+    global Process, camera,disabled_button
+    
+    camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+    Process = True
+    disabled_button = 'start-button'  # Define the ID of the button to desactivate
     return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
 @app.route('/credit')

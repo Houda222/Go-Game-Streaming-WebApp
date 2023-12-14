@@ -27,6 +27,7 @@ class GoVisual:
         self.last_move = None
         self.cursor = len(self.get_moves())
         self.track_progress = True
+        # self.black_stones, self.white_stones = self.get_stones(self.game.numpy(["black_stones", "white_stones"]))
 
     def get_stones(self, board):
         """
@@ -43,9 +44,9 @@ class GoVisual:
         for i in range(board.shape[0]):
             for j in range(board.shape[1]):
                 if np.array_equal(board[i, j], [1, 0]):  # Black stone
-                    self.black_stones.append((i, j))
+                    black_stones.append((i, j))
                 elif np.array_equal(board[i, j], [0, 1]):  # White stone
-                    self.white_stones.append((i, j))
+                    white_stones.append((i, j))
         return black_stones, white_stones
 
     def update_param(self):
