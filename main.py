@@ -30,13 +30,14 @@ game= None
 new_game = True
 
 def nouvelle_partie():
-    global game,new_game
+    global game,new_game, initialized
     game = sente.Game()
     go_visual = GoVisual(game)
     go_board = GoBoard(model)
     game = GoGame(game, go_board, go_visual)
     game_plot = np.ones((100, 100, 3), dtype=np.uint8) * 255
     new_game = True
+    initialized = False
 
 def processing_thread():
     """
