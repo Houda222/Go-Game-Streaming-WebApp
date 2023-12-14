@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 from GoGame import *
 from GoBoard import *
+import sente
 
 class GoVisual:
     """
@@ -175,8 +176,7 @@ class GoVisual:
         """
         if self.track_progress:
             self.cursor = len(self.get_moves())
-        # print("cursor", self.cursor)
-        # print("total", len(self.get_moves()))
+
         black_stones, white_stones = self.update_param()
         return self.drawBoard(black_stones, white_stones)
 
@@ -236,19 +236,24 @@ class GoVisual:
 
         return board
 
-    def draw_from_sgf(self, sgf_url):
-        game = sente.sgf.load(sgf_url)
-        game.get_branches()
-        game.play_default_sequence()
-        
-# %%
+    def load_game_from_sgf(self, sgf_url):
+        """
+        Load a game from an SGF (Smart Game Format) file.
+
+        This function loads a game from the specified SGF file, plays the default sequence,
+        and returns the current position on the board.
+        This serves as intialization, to use the next/previous buttons, we should call and the show the output of self.current_position()
+
+        Args:
+            sgf_url (str): The URL or file path of the SGF file.
+
+        Returns:
+            Tuple: A tuple containing the current position on the board.
+        """
+        self.game = sente.sgf.load(sgf_url)
+        print("loading done")
+        self.game.play_sequence(self.game.get_default_sequence())
+        print(self.game.get_sequence())
+        return self.current_position()
 
     
-# %%
-game = sente.sgf.load("Houda_Anas.sgf") 
-
-# %%
-game.get_branches()
-# %%
-game.play_default_sequence()
-# %%
