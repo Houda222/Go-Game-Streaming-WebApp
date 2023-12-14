@@ -257,6 +257,18 @@ class GoVisual:
         return self.current_position()
 
     def draw_transparent(self, detected_state):
+        """
+        Draw the board without taking into account game rules. Show exactly what's on the board.
+        This makes using previous and next impossible.
+
+        Args:
+            detected_state: numpy.ndarray
+            the current state of the board: the stones and their positions stored in a 19x19x2 board like the sente.Board19
+        
+        Returns:
+            numpy.ndarray
+            The visual board to plot
+        """
         black_stones, white_stones = self.get_stones(detected_state)
         return self.drawBoard(black_stones, white_stones)
         
@@ -264,32 +276,3 @@ class GoVisual:
 
 
 
-#%%
-from ultralytics import YOLO
-from GoGame import *
-
-#%%
-model = YOLO('model.pt')
-#%%
-model = YOLO('model.pt')
-game = sente.Game()
-go_visual = GoVisual(game)
-go_board = GoBoard(model)
-game = GoGame(game, go_board, go_visual, True)
-
-#%%
-
-# test = sente.Board19()
-
-# for i in range(state.shape[0]):
-#     for j in range(state.shape[1]):
-#         if np.array_equal(state[i, j], [1, 0]):  # Black stone
-#             test.play(sente.Move(i, j, sente.stone(1)))
-#         elif np.array_equal(state[i, j], [0, 1]):  # White stone
-#             test.play(sente.Move(i, j, sente.stone(2)))
-
-# # %%
-
-# # %%
-
-# %%
