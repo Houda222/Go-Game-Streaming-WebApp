@@ -18,7 +18,7 @@ camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 model = YOLO('model.pt')
 
 usual_message = "camera is well fixed and everything is okay"
-message = "Il n'y a pas d'erreur "
+message = "Rien n'a encore été lancé "
 disabled_button = 'start-button'
 rules_applied ="True"
 
@@ -38,6 +38,7 @@ def nouvelle_partie():
     game_plot = np.ones((100, 100, 3), dtype=np.uint8) * 255
     new_game = True
     initialized = False
+    open_camera()
 
 def processing_thread():
     """
@@ -49,7 +50,7 @@ def processing_thread():
         """
     
     global ProcessFrame, Process, game_plot, message,initialized,sgf_text,new_game
-
+    print(Process)
     while Process:
         if not ProcessFrame is None:
             try:
@@ -58,7 +59,7 @@ def processing_thread():
                     initialized = True
                     message = usual_message
 
-                else:                    
+                else:    
                     game_plot, sgf_text = game.main_loop(ProcessFrame)
                     message = usual_message
 
@@ -78,6 +79,20 @@ def generate_plot():
     img_base64 = base64.b64encode(img_encoded).decode('utf-8')
 
     return img_base64
+
+def end_camera():
+    """stop the camera """
+    global camera, Process,disabled_button
+    camera.release()
+    Process = False
+    disabled_button = 'stop-button'   # Define the ID of the button to desactivate
+
+def open_camera():
+    """open the camera """
+    global camera, Process,disabled_button
+    camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+    Process = True
+    disabled_button = 'start-button'  # Define the ID of the button to desactivate
 
 @app.route('/')
 def index():
@@ -131,18 +146,11 @@ def getval():
     """
         Route to send the video stream 
         """
-    global Process, camera,disabled_button
     k = request.form['psw1']
-    
     if k == '0':
-        camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
-        Process = True
-        disabled_button = 'start-button'  # Define the ID of the button to desactivate
+        open_camera()
     elif k == '1':
-        camera.release()
-        Process = False
-        disabled_button = 'stop-button'   # Define the ID of the button to desactivate
-   
+        end_camera()
         
     return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
@@ -182,7 +190,7 @@ def change_place():
     game.correct_stone(old_pos,new_pos)
     return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
-@app.route('/get_file_content')
+@app.route('/save_sgf')
 def get_file_content():
     """
         Route which returns the sgf text to be uploaded
@@ -190,32 +198,32 @@ def get_file_content():
     global sgf_text
     return sgf_text
 
-@app.route('/process', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 def process():
     """
         Route which enables us to save the sgf text
         """
+    global Process
     file = request.files['file']
-    file.save('C:/Users/asent/Desktop/projet_16_go/livrables/' + file.filename)
-    return "Fichier traité avec succès"
+    file_path = file.filename
+    Process = False
+    game.go_visual.load_game_from_sgf(file_path)
+
+    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
 @app.route('/Sommaire')
 def sommaire():
     """
         Route to get to the summary page
         """
-    camera.release()
+    end_camera()
     return render_template('Sommaire.html')
 @app.route('/index')
 def index2():
     """
         Route to get to the index page
-        """
-    global Process, camera,disabled_button
-    
-    camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
-    Process = True
-    disabled_button = 'start-button'  # Define the ID of the button to desactivate
+        """    
+    open_camera
     return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
 @app.route('/credit')
@@ -236,12 +244,20 @@ def start():
 
 @app.route('/Historique')
 def historique():
+    
+    
+    
     """
         Route to get to the summary page
         """
     return render_template("Historique.html")
 
 if __name__ == '__main__':
+<<<<<<< Updated upstream
+=======
+    
+    
+>>>>>>> Stashed changes
     nouvelle_partie()
     process_thread = threading.Thread(target=processing_thread, args=())
     process_thread.start()

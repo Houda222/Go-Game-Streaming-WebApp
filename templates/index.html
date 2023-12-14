@@ -65,8 +65,8 @@
     <button onclick="downloadFile()">Télécharger le fichier</button>
 
     <h1>Upload de fichier texte</h1>
-    <form method="POST" action="/process" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".txt">
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".sgf">
         <input type="submit" value="Uploader">
     </form>
     
@@ -74,14 +74,14 @@
         function downloadFile() {
             // Requête AJAX pour obtenir le contenu du fichier depuis le serveur
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/get_file_content', true);
+            xhr.open('GET', '/save_sgf', true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     // Créer un blob avec le contenu du fichier
                     var blob = new Blob([xhr.responseText], { type: 'text/plain' });
                     
                     // Utiliser FileSaver.js pour télécharger le fichier
-                    saveAs(blob, 'nom_du_fichier.txt');
+                    saveAs(blob, 'nom_du_fichier.sgf');
                 }
             };
             xhr.send();
@@ -142,8 +142,10 @@
     </script>
     
     
-    
-    <script src="{{ url_for('static',filename = 'script.js') }}"></script>
+    <!-- 
+
+        <script src="{{ url_for('static',filename = 'script.js') }}"></script>
+    -->
 
 
 
