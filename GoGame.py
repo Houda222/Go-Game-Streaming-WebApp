@@ -10,7 +10,7 @@ class GoGame:
     GoGame is the class responsible for managing the game, comparing frames and finding the newly played move
     """
 
-    def __init__(self, game, board_detect, go_visual):
+    def __init__(self, game, board_detect, go_visual, transparent_mode):
         """
         Constructor method for the GoGame class.
 
@@ -48,6 +48,10 @@ class GoGame:
         self.go_visual = go_visual
         self.game = game
         self.current_player = None
+        self.transparent_mode = transparent_mode
+    
+    def set_transparent_mode(self, bool_):
+        self.transparent_mode = bool_
 
 
     def initialize_game(self, frame, current_player="BLACK"):
@@ -104,10 +108,17 @@ class GoGame:
         # Process the frame using the board detection module
         self.board_detect.process_frame(frame)
 
-        self.define_new_move()
-        
-        return self.go_visual.current_position(), self.get_sgf()
+        if self.transparent_mode:
+            detected_state = self.transparent_mode_moves()
+            return self.go_visual.draw_transparent(detected_state), None
+        else:
+            self.define_new_move()        
+            return self.go_visual.current_position(), self.get_sgf()
     
+    def transparent_mode_moves(self):
+        return np.transpose(self.board_detect.get_state(), (1, 0, 2))
+        
+
     def play_move(self, x, y, stone_color):
         """
         Play a move in the game at the specified position.
@@ -307,3 +318,10 @@ class GoGame:
         return sente.sgf.dumps(self.game)
 
 
+# %%
+import numpy as np
+import cv2
+from GoGame import *
+from GoBoard import *
+import sente
+# %%

@@ -7,7 +7,6 @@ from GoGame import *
 from GoBoard import *
 from GoVisual import *
 
-
 def processing_thread():
     global ProcessFrame, Process
     
@@ -72,7 +71,8 @@ model = YOLO('model.pt')
 game = sente.Game()
 go_visual = GoVisual(game)
 go_board = GoBoard(model)
-game = GoGame(game, go_board, go_visual)
+game = GoGame(game, go_board, go_visual, False)
+
 
 ProcessFrame = None
 Process = True

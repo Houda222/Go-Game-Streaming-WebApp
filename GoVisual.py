@@ -4,6 +4,7 @@ import cv2
 from GoGame import *
 from GoBoard import *
 import sente
+# %%
 
 class GoVisual:
     """
@@ -27,7 +28,8 @@ class GoVisual:
         self.board_size = 19
         self.last_move = None
         self.cursor = len(self.get_moves())
-        self.track_progress = True
+        self.track_progress = True    
+    
 
     def get_stones(self, board):
         """
@@ -251,9 +253,33 @@ class GoVisual:
             Tuple: A tuple containing the current position on the board.
         """
         self.game = sente.sgf.load(sgf_url)
-        print("loading done")
         self.game.play_sequence(self.game.get_default_sequence())
-        print(self.game.get_sequence())
         return self.current_position()
 
     
+
+
+#%%
+from ultralytics import YOLO
+#%%
+model = YOLO('model.pt')
+#%%
+game = sente.Game()
+board = GoBoard(model)
+frame = cv2.imread("c.jpg")
+board.process_frame(frame)
+state = np.transpose(board.get_state(), (1, 0, 2))
+#%%
+
+# test = sente.Board19()
+
+# for i in range(state.shape[0]):
+#     for j in range(state.shape[1]):
+#         if np.array_equal(state[i, j], [1, 0]):  # Black stone
+#             test.play(sente.Move(i, j, sente.stone(1)))
+#         elif np.array_equal(state[i, j], [0, 1]):  # White stone
+#             test.play(sente.Move(i, j, sente.stone(2)))
+
+# # %%
+
+# # %%
