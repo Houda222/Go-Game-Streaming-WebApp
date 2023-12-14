@@ -54,7 +54,7 @@
         </div>
     </div>
     </br>
-    <div class="container-fluid text-center bg custom-fond">
+    <div class="container-fluid text-center bg custom-fond text-info">
         <div id="message">
             {{ message }}
         </div>
@@ -78,30 +78,44 @@
     </br>
     </br>
     
-    <div class="container-fluid text-center bg custom-fond">
+    <div class="container-fluid text-center bg custom-fond col text-light">
+        <b><u>Option</u></b>
         <form method="POST" action="/rules" id="check">
-            <input type="checkbox" id="rules" name="psw3" value="6" {% if check == 'True' %}checked{% endif %} >
-            <label for="rules">Respect des règles strict imposé</label>
+            <label for="rules">Respect des règles strictes : </label>
+            <input type="checkbox" id="rules" name="psw3" value="6" {% if check == 'True' %}checked{% endif %}>
         </form>
-
+        <b><u>Correction</u></b>
         <form method="POST" action="/change_place" id="change">
-            <label for="input1">Champ 1 :</label>
-            <input type="text" id="input1" name="input1" placeholder="Entrez l'ancien emplacement de la pièce">
+            <label for="input1">Ancien emplacement</label>
+            <input type="text" id="input1" name="input1" placeholder="Entrez les coordonnées de l'ancien emplacement de la pièce">
             <br>
-            <label for="input2">Champ 2 :</label>
-            <input type="text" id="input2" name="input2" placeholder="Entrez le nouveau emplacement de la pièce">
+            <label for="input2">Nouvel emplacement</label>
+            <input type="text" id="input2" name="input2" placeholder="Entrez les coordonnées du nouvel emplacement de la pièce">
             <br>
-            <button type="submit">Valider</button>
+            <button class="btn bg custom-button btn-grand" type="submit">Valider</button>
         </form>
+    </div>
 
-    <button onclick="downloadFile()">Télécharger le fichier</button>
+    </br>
+    </br>
+    </br>
 
-    <h1>Upload de fichier texte</h1>
-    <form method="POST" action="/process" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".txt">
-        <input type="submit" value="Uploader">
-    </form>
-    
+    <div class="container-fluid bg custom-fond col text-light">
+        <b><u>Gestion des fichiers</u></b>
+        </br>
+        <button class="btn bg custom-button btn-grand" onclick="downloadFile()">Télécharger le fichier</button>
+        </br>
+        </br>
+        <div class="container-fluid bg custom-fond col text-light">
+            <u>Charger un fichier </u>
+            <form method="POST" action="/process" enctype="multipart/form-data">
+                <input class="btn bg custom-button btn-grand" type="file" name="file" accept=".txt">
+                <br>
+                <input class="btn bg custom-button btn-grand" type="submit" value="Charger">
+            </form>
+        </div>
+    </div>
+
     <script>
         function downloadFile() {
             // Requête AJAX pour obtenir le contenu du fichier depuis le serveur
@@ -129,30 +143,6 @@
     </script>
 
     
-    <div id="video-container">
-        <img id="camera-feed" src="{{ url_for('video_feed') }}" alt="Camera Feed">
-    </div>
-    <div id="image">
-        <img id="image" src="" alt="Image">
-    </div>
-    <div id="message">
-        {{ message }}
-    </div>
-
-
-    <script>
-        function updateMessage() {
-            $.get('/update', function(data) {
-                // Mettre à jour le contenu de #message avec le nouveau message
-                $('#message').text(data.message);
-                $('#image img').attr('src', 'data:image/jpeg;base64,' + data.image);
-                
-            });
-        }
-    
-        // Mettre à jour le message toutes les 3 secondes (ajustez selon vos besoins)
-        setInterval(updateMessage, 3000);
-    </script>
     <!--
     
     
