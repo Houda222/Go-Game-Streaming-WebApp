@@ -43,9 +43,9 @@ class GoVisual:
         for i in range(board.shape[0]):
             for j in range(board.shape[1]):
                 if np.array_equal(board[i, j], [1, 0]):  # Black stone
-                    self.black_stones.append((i, j))
+                    black_stones.append((i, j))
                 elif np.array_equal(board[i, j], [0, 1]):  # White stone
-                    self.white_stones.append((i, j))
+                    white_stones.append((i, j))
         return black_stones, white_stones
 
     def update_param(self):
@@ -236,28 +236,19 @@ class GoVisual:
 
         return board
 
-    # def draw_from_sgf(self, sgf_url):
-    #     with open(sgf_url, 'rb') as f:
-    #         sgf_content = f.read()
+    def draw_from_sgf(self, sgf_url):
+        game = sente.sgf.load(sgf_url)
+        game.get_branches()
+        game.play_default_sequence()
+        
+# %%
 
-    #     # Load an sgf file/ the game
-    #     sgf_game = Sgf_game.from_bytes(sgf_content)
-
-    #     # Extract the game moves
-    #     black_stones = []
-    #     white_stones = []
-    #     for node in sgf_game.get_main_sequence():
-    #         color, move = node.get_move()
-    #         if color is not None and move is not None:
-    #             if color == 'b':
-    #                 row, col = move
-    #                 black_stones.append((row, col)) 
-    #             else:
-    #                 row, col = move
-    #                 white_stones.append((row, col))
-
-    #     self.drawBoard(black_stones, white_stones)
     
-#%%
+# %%
+game = sente.sgf.load("Houda_Anas.sgf") 
 
+# %%
+game.get_branches()
+# %%
+game.play_default_sequence()
 # %%

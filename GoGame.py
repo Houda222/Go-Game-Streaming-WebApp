@@ -1,5 +1,6 @@
 #%%
 from GoVisual import *
+from GoBoard import *
 import sente
 
 
@@ -232,8 +233,6 @@ class GoGame:
         print(self.get_moves())
         new_x = int(ord(str(new_pos[0])) - 64)
         new_y = int(new_pos[1:]) 
-        if old_pos[0] > "H":
-            old_x -= 1
         for i in range(len(self.get_moves())):
             if int(self.get_moves()[i].get_x()+1) == new_x and int(self.get_moves()[i].get_y()+1) == new_y:
                 print("This position is already occupied!")
