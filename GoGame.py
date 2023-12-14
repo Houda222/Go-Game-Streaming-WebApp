@@ -1,4 +1,3 @@
-#%%
 from GoVisual import *
 from GoBoard import *
 import sente
@@ -318,10 +317,3 @@ class GoGame:
         return sente.sgf.dumps(self.game)
 
 
-# %%
-import numpy as np
-import cv2
-from GoGame import *
-from GoBoard import *
-import sente
-# %%

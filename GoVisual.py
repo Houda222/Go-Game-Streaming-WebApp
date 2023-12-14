@@ -259,17 +259,17 @@ class GoVisual:
     
 
 
-#%%
-from ultralytics import YOLO
-#%%
-model = YOLO('model.pt')
-#%%
-game = sente.Game()
-board = GoBoard(model)
-frame = cv2.imread("c.jpg")
-board.process_frame(frame)
-state = np.transpose(board.get_state(), (1, 0, 2))
-#%%
+# #%%
+# from ultralytics import YOLO
+# #%%
+# model = YOLO('model.pt')
+# #%%
+# game = sente.Game()
+# board = GoBoard(model)
+# frame = cv2.imread("c.jpg")
+# board.process_frame(frame)
+# state = np.transpose(board.get_state(), (1, 0, 2))
+# #%%
 
 # test = sente.Board19()
 
@@ -283,3 +283,5 @@ state = np.transpose(board.get_state(), (1, 0, 2))
 # # %%
 
 # # %%
+
+# %%
