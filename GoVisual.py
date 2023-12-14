@@ -256,19 +256,27 @@ class GoVisual:
         self.game.play_sequence(self.game.get_default_sequence())
         return self.current_position()
 
-    
+    def draw_transparent(self, detected_state):
+        black_stones, white_stones = self.get_stones(detected_state)
+        return self.drawBoard(black_stones, white_stones)
+        
+
+
 
 
 #%%
 from ultralytics import YOLO
+from GoGame import *
+
 #%%
 model = YOLO('model.pt')
 #%%
+model = YOLO('model.pt')
 game = sente.Game()
-board = GoBoard(model)
-frame = cv2.imread("c.jpg")
-board.process_frame(frame)
-state = np.transpose(board.get_state(), (1, 0, 2))
+go_visual = GoVisual(game)
+go_board = GoBoard(model)
+game = GoGame(game, go_board, go_visual, True)
+
 #%%
 
 # test = sente.Board19()
