@@ -17,7 +17,7 @@ camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 
 model = YOLO('model.pt')
 
-usual_message = "camera is well fixed and everything is okay"
+usual_message = "La caméra est bien fixée et tout est Ok"
 message = "Rien n'a encore été lancé "
 disabled_button = 'start-button'
 rules_applied ="True"
@@ -31,7 +31,8 @@ new_game = True
 
 
 
-def nouvelle_partie():
+def New_game():
+    
     global game,new_game, initialized
     game = sente.Game()
     go_visual = GoVisual(game)
@@ -40,7 +41,6 @@ def nouvelle_partie():
     game_plot = np.ones((100, 100, 3), dtype=np.uint8) * 255
     new_game = True
     initialized = False
-    # open_camera()
 
 def processing_thread():
     """
@@ -65,7 +65,7 @@ def processing_thread():
                     message = usual_message
 
             except Exception as e:
-                message = "L'erreur est "+str(e)
+                message = "Erreur : "+str(e)
                 
 def generate_plot():
     """
@@ -188,7 +188,10 @@ def change_place():
         """
     old_pos = request.form['input1']
     new_pos = request.form['input2']
-    game.correct_stone(old_pos,new_pos)
+    try:
+        game.correct_stone(old_pos,new_pos)
+    except Exception as e:
+        message = "L'erreur est "+str(e)
     return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
 @app.route('/save_sgf')
@@ -208,7 +211,12 @@ def process():
     file = request.files['file']
     file_path = file.filename
     Process = False
-    game.go_visual.load_game_from_sgf(file_path)
+    try:
+        game.go_visual.load_game_from_sgf(file_path)
+        message = "Le fichier a été correctement chargé"
+    except Exception as e:
+        message = "L'erreur est "+str(e)
+    
 
     return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
@@ -239,7 +247,7 @@ def start():
     """
         Route to start a new game
         """
-    nouvelle_partie()
+    New_game()
     return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
 
@@ -251,7 +259,7 @@ def historique():
     return render_template("Historique.html")
 
 if __name__ == '__main__':
-    nouvelle_partie()
+    New_game()
     process_thread = threading.Thread(target=processing_thread, args=())
     process_thread.start()
     app.run(debug=False)
