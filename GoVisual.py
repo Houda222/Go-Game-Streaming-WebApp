@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 from GoGame import *
 from GoBoard import *
+import sente
 
 class GoVisual:
     """
@@ -176,8 +177,7 @@ class GoVisual:
         """
         if self.track_progress:
             self.cursor = len(self.get_moves())
-        # print("cursor", self.cursor)
-        # print("total", len(self.get_moves()))
+
         black_stones, white_stones = self.update_param()
         return self.drawBoard(black_stones, white_stones)
 
@@ -237,28 +237,24 @@ class GoVisual:
 
         return board
 
-    # def draw_from_sgf(self, sgf_url):
-    #     with open(sgf_url, 'rb') as f:
-    #         sgf_content = f.read()
+    def load_game_from_sgf(self, sgf_url):
+        """
+        Load a game from an SGF (Smart Game Format) file.
 
-    #     # Load an sgf file/ the game
-    #     sgf_game = Sgf_game.from_bytes(sgf_content)
+        This function loads a game from the specified SGF file, plays the default sequence,
+        and returns the current position on the board.
+        This serves as intialization, to use the next/previous buttons, we should call and the show the output of self.current_position()
 
-    #     # Extract the game moves
-    #     black_stones = []
-    #     white_stones = []
-    #     for node in sgf_game.get_main_sequence():
-    #         color, move = node.get_move()
-    #         if color is not None and move is not None:
-    #             if color == 'b':
-    #                 row, col = move
-    #                 black_stones.append((row, col)) 
-    #             else:
-    #                 row, col = move
-    #                 white_stones.append((row, col))
+        Args:
+            sgf_url (str): The URL or file path of the SGF file.
 
-    #     self.drawBoard(black_stones, white_stones)
+        Returns:
+            Tuple: A tuple containing the current position on the board.
+        """
+        self.game = sente.sgf.load(sgf_url)
+        print("loading done")
+        self.game.play_sequence(self.game.get_default_sequence())
+        print(self.game.get_sequence())
+        return self.current_position()
+
     
-#%%
-
-# %%
