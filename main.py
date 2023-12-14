@@ -76,8 +76,9 @@ def generate_plot():
 @app.route('/')
 def index():
     """Route to display HTML page"""
-    global message
-    return render_template('index.html',disabled_button = 'start-button')
+    
+    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
+
 
 @app.route('/update')
 def afficher_message():
@@ -124,7 +125,7 @@ def getval():
     """
         Route to send the video stream 
         """
-    global Process, camera
+    global Process, camera,disabled_button
     k = request.form['psw1']
     
     if k == '0':
@@ -137,7 +138,7 @@ def getval():
         disabled_button = 'stop-button'   # Define the ID of the button to desactivate
    
         
-    return render_template('index.html', disabled_button=disabled_button)
+    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
 @app.route('/game', methods=['POST'])
 def getval2():
@@ -154,12 +155,12 @@ def getval2():
         game.go_visual.next()
     elif i == '5':
         game.go_visual.final_position()    
-    return render_template('index.html', disabled_button=disabled_button)
+    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
 @app.route('/rules', methods=['POST'])
 def handle_rules():
     """
-        Check if we want to apply rules
+        Check if we want to apply rules, still not implemented
         """
     global rules_applied
     rules_applied = request.form['psw3']
@@ -170,10 +171,10 @@ def change_place():
     """
         Route to get the piece that we want to change its position
         """
-    ancien_emplacement = request.form['input1']
-    nouveau_emplacement = request.form['input2']
-
-    return render_template('index.html')
+    old_pos = request.form['input1']
+    new_pos = request.form['input2']
+    game.correct_stone(old_pos,new_pos)
+    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
 @app.route('/get_file_content')
 def get_file_content():
@@ -204,7 +205,7 @@ def index2():
     """
         Route to get to the index page
         """
-    return render_template('index.html')
+    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
 @app.route('/credit')
 def credit():
