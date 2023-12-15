@@ -8,46 +8,41 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="container-fluid text-center bg custom-fond">
-        <div class="row text-danger">
-            <div class="col-5 custom-fond"> 
-                <a href = "{{ url_for('sommaire') }}"><button class="btn bg custom-button btn-grand">
-                    Retour
-                </button></a>
-            </div>
-            <div class="col-2"> 
-                <h1><u><b>Crédits</b></u></h1>
-            </div>
-            <div class="col-5 custom-color">        
-                <img src="{{ url_for('static', filename='Logo-Tanuki_bleu_ciel.png') }}" class="logo logo-Tenuki" alt="Logo de l'association" id="logo">
+    <div class="container-fluid text-center bg custom-color">
+        <div class="container-fluid text-center">
+            <div class="row">
+                <div class="col custom-color">        
+                    <a href="{{ url_for('sommaire') }}"><button class = "btn bg custom-button btn-grand">Retour</button></a>
+                </div>
+                <div class="container text-center col text-light">
+                    <h1><u><b>Parties en cours</b></u></h1>
+                </div>
+                <div class="col custom-color">        
+                    <img src="{{ url_for('static', filename='Logo_Tanuki_gris.jpg') }}" class="logo logo-Tenuki" alt="Logo de l'association" id="logo">
+                </div>
             </div>
         </div>
-    </div>
     </br></br></br>
-    <div class="container-fluid text-center bg custom-fond">
-        Site créé par des étudiants d' IMT Atlantique pour l'association Tenuki. </br>
-        Nous remercions tous les collaboratateurs qui ont fait que ce projet à vu le jour :</br>
-        .</br>
-        .</br>
-        .</br>
-        .</br>
-        .</br>
-        </br></br></br>
-        <div class="row">
-            <div class="col-6">        
-                <img src="{{ url_for('static', filename='Logo-Tanuki_bleu_ciel.png') }}" width="700">
-            </div>
-            <div class="col-6">      
-                <img src="{{ url_for('static', filename='Logo_IMT_Atlantique.png') }}" >
-  
+        <div class="container-fluid text-center">
+            Site créé par des étudiants d'IMT Atlantique pour l'association Tenuki. </br>
+            Nous remercions tous les collaboratateurs qui ont fait que ce projet à vu le jour :</br>
+            .</br>
+            .</br>
+            .</br>
+            .</br>
+            .</br>
             </br></br></br>
+            <div class="row">
+                <div class="col">        
+                    <img src="{{ url_for('static', filename='Logo-Tanuki_bleu_ciel.png') }}" width="200">
+                </div>
+                <div class="col">        
+                    <img src="{{ url_for('static', filename='Logo_IMT_Atlantique.png') }}" width="200">
+                </br></br></br>
+                </div>
             </div>
         </div>
-
-
     </div>
-
- 
 </body>
 </html>
 
