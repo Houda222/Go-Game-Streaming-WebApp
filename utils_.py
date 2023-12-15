@@ -506,7 +506,11 @@ def lines_detection(model_results, perspective_matrix):
     empty_corner = get_key_points(model_results, 4, perspective_matrix)
     empty_edge = get_key_points(model_results, 5, perspective_matrix)
 
-    all_intersections = np.concatenate((empty_intersections, empty_corner, empty_edge), axis=0)
+    arrays = [empty_intersections, empty_corner, empty_edge]
+
+    arrays = [arr for arr in arrays if arr.size > 0]
+
+    all_intersections = np.concatenate(arrays, axis=0)
 
     all_intersections = all_intersections[all_intersections[:, 0].argsort()]
     all_intersections_x = all_intersections[:,0].reshape((-1, 1))
@@ -725,7 +729,8 @@ def get_key_points(results, class_, perspective_matrix, output_edge=600):
 
     """
     # Extract raw key points from the detection results for the specified class
-    key_points = results[0].boxes.xywh[results[0].boxes.cls == class_]
+    key_points = results[0].boxes.xywh[results[0].boxes.cls == class_].reshape((-1, 4))
+    
 
     if not key_points is None:
         if len(key_points) != 0:
@@ -733,7 +738,7 @@ def get_key_points(results, class_, perspective_matrix, output_edge=600):
             key_points_transf = cv2.perspectiveTransform(key_points.reshape((1, -1, 2)), perspective_matrix).reshape((-1, 2))
             return key_points_transf[(key_points_transf[:, 0:2] >= 0).all(axis=1) & (key_points_transf[:, 0:2] <= output_edge).all(axis=1)]
 
-    return key_points
+    return np.array(key_points)
 
 
 def add_lines_in_the_edges(lines, type):

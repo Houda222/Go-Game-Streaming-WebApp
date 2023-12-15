@@ -1,11 +1,8 @@
 #%%
 from GoVisual import *
-import sente
-from ultralytics import YOLO
-import cv2
-from GoGame import *
 from GoBoard import *
-from GoVisual import *
+import sente
+
 
 
 class GoGame:
@@ -13,7 +10,7 @@ class GoGame:
     GoGame is the class responsible for managing the game, comparing frames and finding the newly played move
     """
 
-    def __init__(self, game, board_detect, go_visual):
+    def __init__(self, game, board_detect, go_visual, transparent_mode):
         """
         Constructor method for the GoGame class.
 
@@ -51,6 +48,10 @@ class GoGame:
         self.go_visual = go_visual
         self.game = game
         self.current_player = None
+        self.transparent_mode = transparent_mode
+    
+    def set_transparent_mode(self, bool_):
+        self.transparent_mode = bool_
 
 
     def initialize_game(self, frame, current_player="BLACK"):
@@ -107,10 +108,17 @@ class GoGame:
         # Process the frame using the board detection module
         self.board_detect.process_frame(frame)
 
-        self.define_new_move()
-        
-        return self.go_visual.current_position(), self.get_sgf()
+        if self.transparent_mode:
+            detected_state = self.transparent_mode_moves()
+            return self.go_visual.draw_transparent(detected_state), None
+        else:
+            self.define_new_move()        
+            return self.go_visual.current_position(), self.get_sgf()
     
+    def transparent_mode_moves(self):
+        return np.transpose(self.board_detect.get_state(), (1, 0, 2))
+        
+
     def play_move(self, x, y, stone_color):
         """
         Play a move in the game at the specified position.
@@ -231,19 +239,37 @@ class GoGame:
         self.game.pss()
 
     def correct_stone(self, old_pos, new_pos):
+        """
+        Manually correct the position of a stone on the board.
+
+        This function corrects the position of a stone on the board by first converting the old and new positions to
+        coordinates, checking if the new position is already occupied, and then moving the stone to the new position
+        while preserving the order of moves.
+
+        Args:
+            old_pos (str): The old position of the stone (e.g., "A1").
+            new_pos (str): The new position to correct the stone to (e.g., "S19").
+
+        Returns:
+            None
+        """
+        # Convert old and new positions to coordinates
         old_x = int(ord(str(old_pos[0])) - 64)
         old_y = int(old_pos[1:]) 
-        print(self.get_moves())
-        new_x = int(ord(str(new_pos[0])) - 64 - 1)
+        new_x = int(ord(str(new_pos[0])) - 64)
         new_y = int(new_pos[1:]) 
-        if old_pos[0] > "H":
-            old_x -= 1
+
+        # Iterate through the moves to check if the new position is already occupied
         for i in range(len(self.get_moves())):
+            
             if int(self.get_moves()[i].get_x()+1) == new_x and int(self.get_moves()[i].get_y()+1) == new_y:
                 print("This position is already occupied!")
                 return
+            
             else:
+                # If the old position is found, correct the stone's position
                 if int(self.get_moves()[i].get_x()+1) == old_x and int(self.get_moves()[i].get_y()+1) == old_y:
+                    print("Found!")
                     deleted_moves = self.get_moves()[i - len(self.get_moves()):]
                     self.game.step_up(len(self.get_moves()) - i)
                     self.game.play(new_x, new_y)
@@ -251,6 +277,18 @@ class GoGame:
                     for move in deleted_moves:
                         x, y, color = move.get_x()+1, move.get_y()+1, move.get_stone().name
                         self.game.play(x,y)
+
+    def delete_last_move(self):
+        """
+         Delete the last move in the game sequence.
+
+        This function steps up the game to remove the last move from the game sequence.
+
+        Returns:
+        None
+        """
+        
+        self.game.step_up()
 
     def get_moves(self):
         """
@@ -280,6 +318,3 @@ class GoGame:
         return sente.sgf.dumps(self.game)
 
 
-
-
-# %%
