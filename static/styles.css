@@ -48,8 +48,9 @@ body {
   padding: 30px 60px;
 }
 #video-container, #image {
-  float: left;
-  width: 30%; /* Chaque div prend la moitié de la largeur */
+  /*float: left;*/
+  position: relative;
+  width: 40%; /* Chaque div prend la moitié de la largeur */
   box-sizing: border-box; /* Inclut la bordure et le padding dans la largeur */
   margin-right: 10px; /* Ajustez la marge selon vos besoins */
 }
