@@ -178,7 +178,15 @@ def handle_rules():
         Check if we want to apply rules, still not implemented
         """
     global rules_applied
+    
     rules_applied = request.form['psw3']
+    if rules_applied == "True":
+        game.set_transparent_mode(False)
+        rules_applied = "False"
+    else : 
+        game.set_transparent_mode(True)
+        print("########pas de regles")
+        rules_applied = "True"
     return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
 
 @app.route('/change_place', methods=['POST'])
