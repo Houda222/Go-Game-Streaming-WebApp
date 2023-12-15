@@ -28,6 +28,12 @@
     </br>
     </br>
     </br>
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
 
             <div class="row">
                 <div class="col"> 
@@ -49,8 +55,8 @@
         <div class="col">
             <div class="col">
             <form method="POST" action="/" id="myForm">
-                <button class="btn bg custom-button btn-petit" type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</button>
-                <button class="btn bg custom-button btn-petit" type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
+                <button class="btn bg custom-button btn-grand" type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</button>
+                <button class="btn bg custom-button btn-grand" type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
             </form>
             </div>
         </div>
@@ -66,6 +72,7 @@
                 <div class="col">
                     <div id="image">
                         <img id="image" src="" alt="Image"></img>
+                        </br>
                         <form method="POST" action="/game" id="move">
                             <button class="btn bg custom-button btn-petit" type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>  &lt;&lt; </button>     
                             <button class="btn bg custom-button btn-petit" type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   &lt; </button>     
