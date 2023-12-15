@@ -11,10 +11,10 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="container-fluid text-center bg custom-color">
+    <div class="container-fluid text-center">
         <div class="container-fluid text-center">
             <div class="row">
-                <div class="col custom-color"> 
+                <div class="col"> 
                     <a href = "{{ url_for('summary') }}"><button class="btn bg custom-button btn-grand">
                         Retour
                     </button></a>
@@ -22,18 +22,22 @@
                 <div class="container text-center col text-light"> 
                     <h1><u><b>Parties en cours</b></u></h1>
                 </div>
-                <div class="col custom-color">        
+                <div class="col">        
                     <img src="{{ url_for('static', filename='Logo_Tanuki_gris.jpg') }}" class="logo logo-Tenuki" alt="Logo de l'association" id="logo">
                 </div>
             </div>
         </div>
-        <div class="container-fluid text-center bg custom-fond">
+    </div>
+    </br>
+    </br>
+    <div class="container-fluid col text-center">
+        <div class="container-fluid text-center">
             <form method="POST" action="/" id="myForm">
                 <button class="btn bg custom-button btn-grand" type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</button>
                 <button class="btn bg custom-button btn-grand" type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
             </form>
         </div>
-        <div class="container-fluid text-center bg custom-fond">
+        <div class="container-fluid text-center">
             <div class="row">
                 <div class="col-1"></div>
                 <div id="video-container">
@@ -53,7 +57,7 @@
             </div>
         </div>
         </br>
-        <div class="container-fluid text-center bg custom-fond text-info">
+        <div class="container-fluid text-info">
             <div id="message">
                 {{ message }}
             </div>
@@ -61,7 +65,7 @@
 
         <script>
             function updateMessage() {
-                $.get('/update', function(data) {
+                $.get('/update', fun0ction(data) {
                     // Mettre à jour le contenu de #message avec le nouveau message
                     $('#message').text(data.message);
                     $('#image img').attr('src', 'data:image/jpeg;base64,' + data.image);
@@ -77,7 +81,7 @@
         </br>
         </br>
     
-        <div class="container-fluid text-center bg custom-fond col text-light">
+        <div class="container-fluid col text-light">
             <b><u>Option</u></b>
             <form method="POST" action="/rules" id="check">
                 <label for="rules">Respect des règles strictes : </label>
@@ -99,13 +103,13 @@
         </br>
         </br>
 
-        <div class="container-fluid bg custom-fond col text-light">
+        <div class="container-fluid col text-light">
             <b><u>Gestion des fichiers</u></b>
             </br>
             <button class="btn bg custom-button btn-grand" onclick="downloadFile()">Télécharger le fichier</button>
             </br>
             </br>
-            <div class="container-fluid bg custom-fond col text-light">
+            <div class="container-fluid col text-light">
                 <u>Charger un fichier </u>
                 <form method="POST" action="/process" enctype="multipart/form-data">
                     <input class="btn bg custom-button btn-grand" type="file" name="file" accept=".txt">
