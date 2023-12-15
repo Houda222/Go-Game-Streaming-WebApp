@@ -27,92 +27,92 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="container-fluid text-center bg custom-fond">
-        <form method="POST" action="/" id="myForm">
-            <button class="btn bg custom-button btn-grand" type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</button>
-            <button class="btn bg custom-button btn-grand" type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
-        </form>
-    </div>
-    <div class="container-fluid text-center bg custom-fond">
-        <div class="row">
-            <div class="col-1"></div>
-            <div id="video-container">
-                <img id="camera-feed" src="{{ url_for('video_feed') }}" alt="Camera Feed"></img>
-            </div>
-            <div class="col-1"></div>
-            <div id="image">
-                <img id="image" src="" alt="Image"></img>
-                <form method="POST" action="/game" id="move">
-                    <button class="btn bg custom-button btn-petit" type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>  &lt;&lt; </button>     
-                    <button class="btn bg custom-button btn-petit" type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   &lt; </button>     
-                    <button class="btn bg custom-button btn-petit" type="submit" id="start-button2" name="psw2" value="4" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   &gt; </button>     
-                    <button class="btn bg custom-button btn-petit" type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   &gt;&gt; </button>
-                </form>
-                <div class="col-1"></div>
-            </div>
-        </div>
-    </div>
-    </br>
-    <div class="container-fluid text-center bg custom-fond text-info">
-        <div id="message">
-            {{ message }}
-        </div>
-    </div>
-
-    <script>
-        function updateMessage() {
-            $.get('/update', function(data) {
-                // Mettre à jour le contenu de #message avec le nouveau message
-                $('#message').text(data.message);
-                $('#image img').attr('src', 'data:image/jpeg;base64,' + data.image);
-                
-            });
-        }
-    
-        // Mettre à jour le message toutes les 3 secondes (ajustez selon vos besoins)
-        setInterval(updateMessage, 3000);
-    </script>
-    
-    </br>
-    </br>
-    </br>
-    
-    <div class="container-fluid text-center bg custom-fond col text-light">
-        <b><u>Option</u></b>
-        <form method="POST" action="/rules" id="check">
-            <label for="rules">Respect des règles strictes : </label>
-            <input type="checkbox" id="rules" name="psw3" value="6" {% if check == 'True' %}checked{% endif %}>
-        </form>
-        <b><u>Correction</u></b>
-        <form method="POST" action="/change_place" id="change">
-            <label for="input1">Ancien emplacement</label>
-            <input type="text" id="input1" name="input1" placeholder="Entrez les coordonnées de l'ancien emplacement de la pièce">
-            <br>
-            <label for="input2">Nouvel emplacement</label>
-            <input type="text" id="input2" name="input2" placeholder="Entrez les coordonnées du nouvel emplacement de la pièce">
-            <br>
-            <button class="btn bg custom-button btn-grand" type="submit">Valider</button>
-        </form>
-    </div>
-
-    </br>
-    </br>
-    </br>
-
-    <div class="container-fluid bg custom-fond col text-light">
-        <b><u>Gestion des fichiers</u></b>
-        </br>
-        <button class="btn bg custom-button btn-grand" onclick="downloadFile()">Télécharger le fichier</button>
-        </br>
-        </br>
-        <div class="container-fluid bg custom-fond col text-light">
-            <u>Charger un fichier </u>
-            <form method="POST" action="/process" enctype="multipart/form-data">
-                <input class="btn bg custom-button btn-grand" type="file" name="file" accept=".txt">
-                <br>
-                <input class="btn bg custom-button btn-grand" type="submit" value="Charger">
+        <div class="container-fluid text-center bg custom-fond">
+            <form method="POST" action="/" id="myForm">
+                <button class="btn bg custom-button btn-grand" type="submit" id="start-button" name="psw1" value="0" {% if disabled_button == 'start-button' %}disabled{% endif %}>Démarrer l'enregistrement de la partie</button>
+                <button class="btn bg custom-button btn-grand" type="submit" id="stop-button" name="psw1" value="1" {% if disabled_button == 'stop-button' %}disabled{% endif %}>Stop Camera</button>
             </form>
+        </div>
+        <div class="container-fluid text-center bg custom-fond">
+            <div class="row">
+                <div class="col-1"></div>
+                <div id="video-container">
+                    <img id="camera-feed" src="{{ url_for('video_feed') }}" alt="Camera Feed"></img>
+                </div>
+                <div class="col-1"></div>
+                <div id="image">
+                    <img id="image" src="" alt="Image"></img>
+                    <form method="POST" action="/game" id="move">
+                        <button class="btn bg custom-button btn-petit" type="submit" id="start-button4" name="psw2" value="2" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>  &lt;&lt; </button>     
+                        <button class="btn bg custom-button btn-petit" type="submit" id="start-button1" name="psw2" value="3" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   &lt; </button>     
+                        <button class="btn bg custom-button btn-petit" type="submit" id="start-button2" name="psw2" value="4" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   &gt; </button>     
+                        <button class="btn bg custom-button btn-petit" type="submit" id="start-button3" name="psw2" value="5" {% if disabled_buttono == 'stop-button' %}disabled{% endif %}>   &gt;&gt; </button>
+                    </form>
+                    <div class="col-1"></div>
+                </div>
+            </div>
+        </div>
+        </br>
+        <div class="container-fluid text-center bg custom-fond text-info">
+            <div id="message">
+                {{ message }}
+            </div>
+        </div>
+
+        <script>
+            function updateMessage() {
+                $.get('/update', function(data) {
+                    // Mettre à jour le contenu de #message avec le nouveau message
+                    $('#message').text(data.message);
+                    $('#image img').attr('src', 'data:image/jpeg;base64,' + data.image);
+                
+                });
+            }
+    
+            // Mettre à jour le message toutes les 3 secondes (ajustez selon vos besoins)
+            setInterval(updateMessage, 3000);
+        </script>
+    
+        </br>
+        </br>
+        </br>
+    
+        <div class="container-fluid text-center bg custom-fond col text-light">
+            <b><u>Option</u></b>
+            <form method="POST" action="/rules" id="check">
+                <label for="rules">Respect des règles strictes : </label>
+                <input type="checkbox" id="rules" name="psw3" value="6" {% if check == 'True' %}checked{% endif %}>
+            </form>
+            <b><u>Correction</u></b>
+            <form method="POST" action="/change_place" id="change">
+                <label for="input1">Ancien emplacement</label>
+                <input type="text" id="input1" name="input1" placeholder="Entrez les coordonnées de l'ancien emplacement de la pièce">
+                <br>
+                <label for="input2">Nouvel emplacement</label>
+                <input type="text" id="input2" name="input2" placeholder="Entrez les coordonnées du nouvel emplacement de la pièce">
+                <br>
+                <button class="btn bg custom-button btn-grand" type="submit">Valider</button>
+            </form>
+        </div>
+
+        </br>
+        </br>
+        </br>
+
+        <div class="container-fluid bg custom-fond col text-light">
+            <b><u>Gestion des fichiers</u></b>
+            </br>
+            <button class="btn bg custom-button btn-grand" onclick="downloadFile()">Télécharger le fichier</button>
+            </br>
+            </br>
+            <div class="container-fluid bg custom-fond col text-light">
+                <u>Charger un fichier </u>
+                <form method="POST" action="/process" enctype="multipart/form-data">
+                    <input class="btn bg custom-button btn-grand" type="file" name="file" accept=".txt">
+                    <br>
+                    <input class="btn bg custom-button btn-grand" type="submit" value="Charger">
+                </form>
+            </div>
         </div>
     </div>
 
