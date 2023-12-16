@@ -8,11 +8,11 @@ from flask import Flask, render_template, Response , request
 import cv2
 import base64
 
-
+cam_index = 0
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = 'your_secret_key'  
-camera = cv2.VideoCapture(1,cv2.CAP_DSHOW) 
+camera = cv2.VideoCapture(cam_index,cv2.CAP_DSHOW) 
 
 
 model = YOLO('model.pt')
@@ -20,7 +20,7 @@ model = YOLO('model.pt')
 usual_message = "La caméra est bien fixée et tout est Ok"
 message = "Rien n'a encore été lancé "
 disabled_button = 'start-button'
-rules_applied ="True"
+# rules_applied ="True"
 
 ProcessFrame = None
 Process = True
@@ -28,7 +28,8 @@ initialized = False
 sgf_text = None
 game= None
 new_game = True
-
+process_thread = None
+camera_running = False
 
 
 def New_game():
@@ -37,10 +38,11 @@ def New_game():
     game = sente.Game()
     go_visual = GoVisual(game)
     go_board = GoBoard(model)
-    game = GoGame(game, go_board, go_visual,True)
+    game = GoGame(game, go_board, go_visual, False)
     game_plot = np.ones((100, 100, 3), dtype=np.uint8) * 255
     new_game = True
     initialized = False
+    process = True
 
 def processing_thread():
     """
@@ -81,25 +83,29 @@ def generate_plot():
 
     return img_base64
 
-def end_camera():
-    """stop the camera """
-    global camera, Process,disabled_button
-    camera.release()
-    Process = False
-    disabled_button = 'stop-button'   # Define the ID of the button to desactivate
+# def end_camera():
+#     global process_thread, camera_running, disabled_button
+#     if camera_running:
+#         process_thread.join()  # Wait for the thread to finish before stopping
+#         camera_running = False
+#         disabled_button = 'stop-button'   # Define the ID of the button to desactivate
 
-def open_camera():
-    """open the camera """
-    global camera, Process,disabled_button
-    camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
-    Process = True
-    disabled_button = 'start-button'  # Define the ID of the button to desactivate
+# def open_camera():
+#     """Open the camera"""
+#     global camera, process_thread, disabled_button, camera_running
+#     if not camera_running:
+#         camera = cv2.VideoCapture(cam_index, cv2.CAP_DSHOW)
+#         process_thread = threading.Thread(target=processing_thread, args=(camera,))
+#         process_thread.start()
+#         camera_running = True
+#         disabled_button = 'start-button'  # Define the ID of the button to desactivate
 
 @app.route('/')
 def index():
     """Route to display HTML page"""
     
-    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
+    return render_template('home.html', disabled_button=disabled_button)
+
 
 
 @app.route('/update')
@@ -141,8 +147,21 @@ def video_feed():
         """
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+def end_camera():
+    """stop the camera """
+    global camera, Process,disabled_button
+    camera.release()
+    Process = False
+    disabled_button = 'stop-button'   # Define the ID of the button to desactivate
 
-@app.route('/', methods=['POST'])
+def open_camera():
+    """open the camera """
+    global camera, Process,disabled_button
+    camera = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+    Process = True
+    disabled_button = 'start-button'  # Define the ID of the button to desactivate
+
+@app.route('/cam', methods=['POST'])
 def getval():
     """
         Route to send the video stream 
@@ -153,7 +172,20 @@ def getval():
     elif k == '1':
         end_camera()
         
-    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
+    return render_template('partie.html', disabled_button=disabled_button)
+
+@app.route('/t', methods=['POST'])
+def getvaltransparent():
+    """
+        Route to send the video stream 
+        """
+    k = request.form['psw1']
+    if k == '0':
+        open_camera()
+    elif k == '1':
+        end_camera()
+        
+    return render_template('transparent.html', disabled_button=disabled_button)
 
 @app.route('/game', methods=['POST'])
 def getval2():
@@ -170,7 +202,7 @@ def getval2():
         game.go_visual.next()
     elif i == '5':
         game.go_visual.final_position()    
-    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
+    return render_template('partie.html', disabled_button=disabled_button)
 
 @app.route('/rules', methods=['POST'])
 def handle_rules():
@@ -187,7 +219,7 @@ def handle_rules():
         game.set_transparent_mode(True)
         print("########pas de regles")
         rules_applied = "True"
-    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
+    return render_template('partie.html', disabled_button=disabled_button)
 
 @app.route('/change_place', methods=['POST'])
 def change_place():
@@ -200,7 +232,7 @@ def change_place():
         game.correct_stone(old_pos,new_pos)
     except Exception as e:
         message = "L'erreur est "+str(e)
-    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
+    return render_template('partie.html', disabled_button=disabled_button)
 
 @app.route('/save_sgf')
 def get_file_content():
@@ -226,22 +258,15 @@ def process():
         message = "L'erreur est "+str(e)
     
 
-    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
+    return render_template('sgf.html', disabled_button=disabled_button)
 
-@app.route('/Sommaire')
-def sommaire():
+@app.route('/Home')
+def home():
     """
-        Route to get to the summary page
-        """
-    end_camera()
-    return render_template('Sommaire.html')
-@app.route('/index')
-def index2():
-    """
-        Route to get to the index page
+        Route to get to the home page
         """    
-    open_camera
-    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
+    open_camera()
+    return render_template('Home.html', disabled_button=disabled_button)
 
 @app.route('/credit')
 def credit():
@@ -256,15 +281,54 @@ def start():
         Route to start a new game
         """
     New_game()
-    return render_template('index.html', disabled_button=disabled_button, check =rules_applied )
+    return render_template('partie.html', disabled_button=disabled_button)
 
-
-@app.route('/Historique')
+@app.route('/undo', methods=['POST'])
+def undo():
+    """
+    undo last played move
+        """
+    game.delete_last_move()
+    return render_template("partie.html")
+    
+@app.route('/historique')
 def historique():
     """
         Route to get to the summary page
         """
     return render_template("Historique.html")
+
+
+@app.route('/partie')
+def partie():
+    """
+        Route to get to the streaming page in game mode
+        """
+    return render_template("partie.html")
+
+@app.route('/transparent')
+def transparent():
+    """
+        Route to get to the streaming page in transparent mode
+        """
+    game.set_transparent_mode(True)
+    return render_template("transparent.html")
+
+@app.route('/sgf')
+def sgf():
+    """
+        Route to get to the streaming page in transparent mode
+        """
+    return render_template("sgf.html")
+
+@app.route('/transparent')
+def appl_transparent_mode():
+    """
+        activate tranparent mode in the transparent mode page
+        """
+    game.set_transparent_mode(True)
+
+    return render_template("transparent.html")
 
 if __name__ == '__main__':
     New_game()
