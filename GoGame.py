@@ -77,16 +77,19 @@ class GoGame:
 
         # Process the frame using the board detection module
         self.board_detect.process_frame(frame)
+        
+        if self.transparent_mode:
+            detected_state = self.transparent_mode_moves()
+            return self.go_visual.draw_transparent(detected_state), None
+        else:
+            # Populate the game based on the detected stones
+            self.auto_play_game_moves()
 
-        # Populate the game based on the detected stones
-        self.auto_play_game_moves()
+            # Check and adjust the active player if needed
+            if not self.game.get_active_player().name == current_player:
+                self.game.pss()
 
-        # Check and adjust the active player if needed
-        if not self.game.get_active_player().name == current_player:
-            self.game.pss()
-
-        return self.go_visual.current_position(), self.get_sgf()
-        # return self.main_loop(frame)
+            return self.go_visual.current_position(), self.get_sgf()
     
     
     def main_loop(self, frame):

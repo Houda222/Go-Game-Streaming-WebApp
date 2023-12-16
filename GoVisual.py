@@ -1,10 +1,9 @@
-#%%
 import numpy as np
 import cv2
 from GoGame import *
 from GoBoard import *
 import sente
-# %%
+
 
 class GoVisual:
     """
@@ -132,9 +131,9 @@ class GoVisual:
         string
             The color of the current turn
         """
-        if self.last_move[2].get_stone().name == 'BLACK':
+        if self.last_move.get_stone().name == 'BLACK':
             return 'WHITE' 
-        elif self.last_move[2].get_stone().name == 'WHITE' or self.cursor == 0:
+        elif self.last_move.get_stone().name == 'WHITE' or self.cursor == 0:
             return 'BLACK'
         
     def previous(self):
@@ -270,6 +269,7 @@ class GoVisual:
             The visual board to plot
         """
         black_stones, white_stones = self.get_stones(detected_state)
+        self.last_move = None
         return self.drawBoard(black_stones, white_stones)
         
 
