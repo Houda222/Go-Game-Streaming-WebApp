@@ -67,7 +67,20 @@
                     {{ message }}
                 </div>
             </div>
-
+        <script>
+            function updateMessage() {
+                $.get('/update', function(data) {
+                    // Mettre à jour le contenu de #message avec le nouveau message
+                    $('#message').text(data.message);
+                    $('#image img').attr('src', 'data:image/jpeg;base64,' + data.image);
+                
+                });
+            }
+    
+            // Mettre à jour le message toutes les 3 secondes (ajustez selon vos besoins)
+            setInterval(updateMessage, 3000);
+        </script>
+    
         </br>
         </br>
 
@@ -98,20 +111,7 @@
         });
     </script>
 
-    <script>
-    function updateMessage() {
-        $.get('/update', function(data) {
-            // Mettre à jour le contenu de #message avec le nouveau message
-            $('#message').text(data.message);
-            $('#image img').attr('src', 'data:image/jpeg;base64,' + data.image);
-        
-        });
-    }
-
-    // Mettre à jour le message toutes les 3 secondes (ajustez selon vos besoins)
-    setInterval(updateMessage, 3000);
-</script>
-
+    
     <!--
     
 
