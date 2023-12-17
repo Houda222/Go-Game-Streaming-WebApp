@@ -30,6 +30,7 @@ empty_board = cv2.imread("empty_board.jpg")
 game_plot = empty_board
 process_thread = None
 go_game = None
+transparent_mode = False
 
 
 def New_game(transparent_mode=False):
@@ -75,8 +76,12 @@ def generate_plot():
     global game_plot
     
     processing_thread()
+    if transparent_mode:
+        to_plot = game_plot
+    else:
+        to_plot = go_game.go_visual.current_position()
     
-    _, img_encoded = cv2.imencode('.jpg', game_plot)
+    _, img_encoded = cv2.imencode('.jpg', to_plot)
     img_base64 = base64.b64encode(img_encoded).decode('utf-8')
 
     return img_base64
@@ -113,7 +118,7 @@ def afficher_message():
             message
             image
     """
-    print(disabled_button)
+
     return {'message': message, 'image' : generate_plot()}
 
 def generate_frames():
@@ -164,7 +169,10 @@ def getval():
     """
         Route to send the video stream 
     """
-    global disabled_button
+    global disabled_button, transparent_mode
+    
+    transparent_mode = False
+ 
     try:
         k = request.form['psw1']
         if k == '0':
@@ -178,6 +186,7 @@ def getval():
     except Exception:
         print("Exception: Page can not be refreshed")
     
+    
     return render_template('partie.html', disabled_button=disabled_button)
 
 @app.route('/t', methods=['POST', 'GET'])
@@ -185,7 +194,9 @@ def getvaltransparent():
     """
     Route to send the video stream 
     """
-    global disabled_button
+    global disabled_button, transparent_mode
+    
+    transparent_mode = True
     try:
         k = request.form['psw1']
         if k == '0':
@@ -205,7 +216,11 @@ def getvaltransparent():
 def getval2():
     """
         Change the current move
-        """
+    """
+    global transparent_mode
+    
+    transparent_mode = False
+    
     i = request.form['psw2']
     if i =='2':
         go_game.go_visual.initial_position()
@@ -214,15 +229,39 @@ def getval2():
     elif i == '4':
         go_game.go_visual.next()
     elif i == '5':
-        go_game.go_visual.final_position()    
+        go_game.go_visual.final_position() 
+    print(i)   
     return render_template('partie.html', disabled_button=disabled_button)
+
+@app.route('/sgf_controls', methods=['POST'])
+def getval3():
+    """
+        Change the current move
+    """
+    global transparent_mode
+    
+    transparent_mode = False
+    
+    i = request.form['psw2']
+    if i =='2':
+        go_game.go_visual.initial_position()
+    elif i == '3':
+        go_game.go_visual.previous()
+    elif i == '4':
+        go_game.go_visual.next()
+    elif i == '5':
+        go_game.go_visual.final_position() 
+    print(i)   
+    return render_template('sgf.html', disabled_button=disabled_button)
 
 @app.route('/rules', methods=['POST'])
 def handle_rules():
     """
         Check if we want to apply rules, still not implemented
     """
-    global rules_applied
+    global rules_applied, transparent_mode
+    
+    transparent_mode = False
     
     rules_applied = request.form['psw3']
     if rules_applied == "True":
@@ -239,6 +278,10 @@ def change_place():
     """
         Route to get the piece that we want to change its position
         """
+    global transparent_mode
+    
+    transparent_mode = False
+    
     old_pos = request.form['input1']
     new_pos = request.form['input2']
     try:
@@ -260,6 +303,9 @@ def process():
     """
         Route which enables us to save the sgf text
         """
+    global transparent_mode
+    
+    transparent_mode = False
     file = request.files['file']
     file_path = file.filename
     try:
@@ -291,6 +337,10 @@ def undo():
     """
     undo last played move
     """
+    global transparent_mode
+    
+    transparent_mode = False
+    
     go_game.delete_last_move()
     return render_template("partie.html")
     
@@ -307,6 +357,9 @@ def partie():
     """
     Route to get to the streaming page in game mode
     """
+    global transparent_mode
+    
+    transparent_mode = False
 
     return render_template("partie.html", disabled_button=disabled_button)
 
@@ -316,6 +369,9 @@ def transparent():
         Route to get to the streaming page in transparent mode
         """
     go_game.set_transparent_mode(True)
+    global transparent_mode
+    
+    transparent_mode = False
     return render_template("transparent.html")
 
 @app.route('/sgf')
@@ -323,7 +379,12 @@ def sgf():
     """
         Route to get to the streaming page in transparent mode
         """
+    global transparent_mode
+    
+    transparent_mode = False
     return render_template("sgf.html")
+
+
 
 if __name__ == '__main__':
     New_game()
