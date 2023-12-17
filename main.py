@@ -113,6 +113,7 @@ def afficher_message():
             message
             image
     """
+    print(disabled_button)
     return {'message': message, 'image' : generate_plot()}
 
 def generate_frames():
