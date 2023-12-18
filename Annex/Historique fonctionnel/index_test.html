@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles_test.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container-fluid text-center bg custom-fond">
+        <div class="row text-danger">
+            <div class="col-5 custom-fond"> 
+                <a href = "Sommaire_test.html"><button class="btn bg custom-button btn-grand">
+                    Retour
+                </button></a>
+            </div>
+            <div class="col-2"> 
+                <h1><u><b>Parties en cours</b></u></h1>
+            </div>
+            <div class="col-5 custom-color">        
+                <img src="Logo-Tanuki_bleu_ciel.png" class="logo logo-Tenuki" alt="Logo de l'association" id="logo">
+            </div>
+        </div>
+    </div>
+    <button id="start-button">Démarrer l'enregistrement de la partie</button>
+
+     <div id="video-container">
+        <video id="camera-feed" autoplay playsinline></video>
+    </div>
+    
+
+    <script src="script.js"></script>
+    <button onclick="premier();">
+        &lt;&lt;
+    </button>     
+    <button onclick="precedent();">
+        &lt;
+    </button>
+    <button onclick="suivant();">
+        &gt;
+    </button>      
+    <button onclick="dernier();">
+        &gt;&gt;
+    </button>
+</body>
+</html>
+

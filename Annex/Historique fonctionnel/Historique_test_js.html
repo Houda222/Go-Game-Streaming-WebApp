@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Historique</title>
+  <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="styles_test.css">
+</head>
+<body>
+     <script>
+    var longueurHistorique = 0;
+    </script>
+    <div class="container-fluid text-center bg custom-fond">
+        <div class="row text-danger">
+            <div class="col-5 custom-fond"> 
+                <a href = "Sommaire_test.html"><button class="btn bg custom-button btn-grand">
+                    Retour
+                </button></a>
+            </div>
+            <div class="col-2"> 
+                <h1><u><b>Historique</b></u></h1>
+            </div>
+            <div class="col-5 custom-color">        
+                <img src="Logo-Tanuki_bleu_ciel.png" class="logo logo-Tenuki" alt="Logo de l'association" id="logo">
+            </div>
+        </div>
+    </div>
+    <div class="container-md text-center bg custom-fond">
+        <div class="row">
+            <h2>Parties disponibles : <span id="nbParties"></span></h2>
+            <button onclick="actualiser()">
+                Actualiser
+            </button></br>  
+            <button onclick="reset()">
+                Reset
+            </button></br>  
+        </div>
+        <div class="row">
+            <table id = "historique">
+                
+                <thead>
+                    <tr>
+                        <th>Date de réalisation</th>
+                        <th>Joueur 1</th>
+                        <th>Joueur 2</th>
+                        <th>Description</th>
+                        <th>Détails</th>
+                        <th>Modifier</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Lignes existantes (si nécessaire) -->
+                </tbody>
+            </table>
+        </div>
+    <script src="historiquejs.js"></script>
+</body>
+</html>
