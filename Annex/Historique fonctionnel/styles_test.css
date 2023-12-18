@@ -1,0 +1,54 @@
+/* Exemple : Rouge pur avec opacité à 0.5 */
+body {
+  background-color: skyblue; /* Couleur de fond bleu ciel */
+}
+
+.logo_tenuki {
+  position: absolute; /* Position absolue pour placer le logo */
+  top: 10px; /* Distance depuis le haut en pixels */
+  left: 10px; /* Distance depuis la gauche en pixels */
+}
+.logo {
+  width: 15%;
+}
+
+
+.custom-fond { background-color: rgb(132, 206, 234); }
+.custom-button { background-color: rgb(202, 202, 202); }
+
+.btn-grand {
+  font-size: 24px;
+  padding: 15px 30px;
+}
+.btn-sommaire{
+  font-size: 48px;
+  padding: 30px 60px;
+}
+
+.bleu_ciel {
+  background-color: skyblue; /* Couleur de fond bleu ciel */
+}
+
+.gris{
+  background-color: rgba(81, 81, 79, 0);
+}
+
+
+
+#video-container {
+  display: grid;
+  place-items: center; /* Centre horizontalement et verticalement */
+  display: none; /* Cache la vidéo initialement */
+
+}
+
+.video {
+
+  object-fit: cover; /* Remplit le conteneur vidéo sans déformation
+*/ } 
+
+.btn-petit{
+  font-size: 12px;
+  padding: 7px 15px;
+}
+
