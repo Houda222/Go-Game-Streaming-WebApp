@@ -2,6 +2,7 @@
 import numpy as np
 from sgf_to_numpy import *
 import itertools
+import copy
 import sys
 sys.path.append("Post_treatment_AI/Code")
 from Fill_gaps_model import *
@@ -19,7 +20,9 @@ def correctorAI(liste_tableaux):
 
     turn=1 #contient 1 si c'est à noir de jouer, 2 si c'est à blanc de jouer
     notturn=2
-    for index in range(1,Nb_frames):
+    index = 1
+
+    while index<Nb_frames:
         D,nb_ajouts=differences(liste_tableaux[index-1],liste_tableaux[index])
         #pierres_noires_ajoutées=D[1]["ajout"]
         #pierres_noires_retirées=D[1]["retire"]
@@ -37,41 +40,16 @@ def correctorAI(liste_tableaux):
                 temp=turn # On change le tour du joueur pour la prochaine iteration
                 turn=notturn
                 notturn=temp
+                index+=1
             elif (len(D[turn]["ajout"])==0 and len(D[notturn]["ajout"])==0): 
+                index+=1
                 continue
             else:
-                b,w = get_possible_moves(liste_tableaux[index],liste_tableaux[index-1])
-                liste_tableaux=fill_gaps(model,liste_tableaux,index-1,index,b, w).copy()
-                index-=1
+                liste_tableaux.insert(index,liste_tableaux[index].copy())
+                b,w = get_possible_moves(liste_tableaux[index-1],liste_tableaux[index+1])
+                liste_tableaux=fill_gaps(model,liste_tableaux,index,index+2,b, w)
+                Nb_frames = len(liste_tableaux)
+                if Nb_frames-1 == index:
+                    break
           
     return liste_coups
-
-    
-
-
-
-                
-
-   
-
-            
-            
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -324,11 +324,9 @@ def get_sgf_txt():
         Route which returns the sgf text to be uploaded
         """
     global transparent_mode
-    global endGame
-    endGame = True
     global sgf_text
     if transparent_mode:
-        sgf_text = go_game.post_treatment(endGame)
+        sgf_text = go_game.post_treatment(True)
     return sgf_text
 
 @app.route('/upload', methods=['POST'])
