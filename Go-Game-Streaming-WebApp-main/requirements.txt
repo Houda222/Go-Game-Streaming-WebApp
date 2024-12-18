@@ -1,6 +1,0 @@
-Flask==3.0.0
-opencv-contrib-python==4.8.1.78
-opencv-python==4.8.1.78
-sente==0.4.2
-sgfmill==1.1.1
-ultralytics==8.0.206
