@@ -7,8 +7,22 @@ from GoVisual import *
 from flask import Flask, render_template, Response, request
 import cv2
 import base64
+import time
 
-cam_index = 0
+import recup_os
+
+#cam_index = 0
+def find_camera_index():
+    index = 0
+    while True:
+        cap = cv2.VideoCapture(index)
+        if cap.read()[0]:
+            cap.release()
+            return index
+        cap.release()
+        index += 1
+
+cam_index = find_camera_index()
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = 'your_secret_key'  
@@ -31,6 +45,7 @@ game_plot = empty_board
 process_thread = None
 go_game = None
 transparent_mode = False
+endGame = False
 
 
 def New_game(transparent_mode=False):
@@ -57,11 +72,11 @@ def processing_thread():
     if not ProcessFrame is None:
         try:
             if not initialized:
-                game_plot = go_game.initialize_game(ProcessFrame)
+                game_plot, sgf_text = go_game.initialize_game(ProcessFrame, endGame)
                 initialized = True
                 message = usual_message
             else:    
-                game_plot, sgf_text = go_game.main_loop(ProcessFrame)
+                game_plot, sgf_text = go_game.main_loop(ProcessFrame, endGame)
                 message = usual_message
         except Exception as e:
             message = "Erreur : "+str(e)
@@ -141,6 +156,7 @@ def generate_frames():
                 frame = buffer.tobytes()
                 yield (b'--frame\r\n'
                         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                time.sleep(0.05)
         except Exception:
             print('Exception: Camera not detected')
             break
@@ -161,8 +177,20 @@ def end_camera():
 def open_camera():
     """open the camera """
     global camera
-    camera = cv2.VideoCapture(cam_index, cv2.CAP_DSHOW)
+    os = recup_os.get_os()
+    if os == "Windows" :
+        camera = cv2.VideoCapture(cam_index, cv2.CAP_DSHOW)
+    elif os == "Linux" :
+        camera = cv2.VideoCapture(cam_index, cv2.V4L2)
+    else : 
+        camera = cv2.VideoCapture(cam_index)
 
+    try :
+        camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    except :
+        pass
+    
 
 @app.route('/cam', methods=['POST', 'GET'])
 def getval():
@@ -295,7 +323,12 @@ def get_sgf_txt():
     """
         Route which returns the sgf text to be uploaded
         """
+    global transparent_mode
+    global endGame
+    endGame = True
     global sgf_text
+    if transparent_mode:
+        sgf_text = go_game.post_treatment(endGame)
     return sgf_text
 
 @app.route('/upload', methods=['POST'])
@@ -391,5 +424,4 @@ if __name__ == '__main__':
     # process_thread = threading.Thread(target=processing_thread, args=())
     # process_thread.start()
     app.run(debug=True)
-    
-# %%
+ 

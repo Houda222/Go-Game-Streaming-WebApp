@@ -3,6 +3,15 @@ from GoVisual import *
 from GoBoard import *
 import sente
 
+import sys
+sys.path.append("Post_treatment_Algo/Code")
+from corrector_noAI import correctorNoAI
+from corrector_withAI import correctorAI
+from sgf_to_numpy import to_sgf
+
+sys.path.append("Post_treatment_AI/Code")
+from Fill_gaps_model import *
+
 
 
 class GoGame:
@@ -41,6 +50,18 @@ class GoGame:
 
         current_player : None
             Placeholder for the current player in the game.
+        
+        transparent_mode : bool
+            Boolean flag to enable or disable transparent mode.
+        
+        recent_moves_buffer : list
+            List to store the recent moves for game mode.
+        
+        buffer_size : int
+            Maximum size of the recent moves buffer.
+        
+        numpy_board : list
+            List to store the numpy representation of the board at each move for post-treatment.
 
         """
         self.moves = []
@@ -49,12 +70,15 @@ class GoGame:
         self.game = game
         self.current_player = None
         self.transparent_mode = transparent_mode
+        self.recent_moves_buffer= []
+        self.buffer_size = 5
+        self.numpy_board = []
     
     def set_transparent_mode(self, bool_):
         self.transparent_mode = bool_
 
 
-    def initialize_game(self, frame, current_player="BLACK"):
+    def initialize_game(self, frame, current_player="BLACK", endGame=False):
         """
         Initialize the game state based on the provided frame and current player.
 
@@ -64,9 +88,13 @@ class GoGame:
         Args:
             frame: The frame to initialize the game.
             current_player (str): The current player to set, either "BLACK" or "WHITE".
+            endGame (bool): A boolean flag to determine if the game is ending.
 
         Returns:
-            Tuple: A tuple containing the current position on the board and the SGF representation of the game.
+            For game mode:
+                Tuple: A tuple containing the current position on the board and the SGF representation of the game.
+            For transparent mode:
+                Tuple: A tuple containing the transparent mode representation of the board and the post-treatment SGF.
         """
         # Reset moves and set the current player
         self.moves = []
@@ -80,7 +108,8 @@ class GoGame:
         
         if self.transparent_mode:
             detected_state = self.transparent_mode_moves()
-            return self.go_visual.draw_transparent(detected_state), None
+            return self.go_visual.draw_transparent(detected_state), self.post_treatment(endGame)
+        
         else:
             # Populate the game based on the detected stones
             self.auto_play_game_moves()
@@ -92,7 +121,7 @@ class GoGame:
             return self.go_visual.current_position(), self.get_sgf()
     
     
-    def main_loop(self, frame):
+    def main_loop(self, frame, endGame=False):
         """
         Main loop for processing frames and updating the game state.
 
@@ -101,9 +130,13 @@ class GoGame:
 
         Args:
             frame: The frame to be processed.
+            endGame (bool): A boolean flag to determine if the game is ending.
 
         Returns:
-            Tuple: A tuple containing the current position on the board and the SGF representation of the game.
+            For game mode:
+                Tuple: A tuple containing the current position on the board and the SGF representation of the game.
+            For transparent mode:
+                Tuple: A tuple containing the transparent mode representation of the board and the post-treatment SGF.
         """
         # Set the current frame for the instance
         self.frame = frame
@@ -113,15 +146,40 @@ class GoGame:
 
         if self.transparent_mode:
             detected_state = self.transparent_mode_moves()
-            return self.go_visual.draw_transparent(detected_state), None
+            return self.go_visual.draw_transparent(detected_state), self.post_treatment(endGame)
         else:
             self.define_new_move()        
             return self.go_visual.current_position(), self.get_sgf()
     
-    def transparent_mode_moves(self):
-        return np.transpose(self.board_detect.get_state(), (1, 0, 2))
-        
 
+    def copyBoardToNumpy(self):
+        """
+        Copy the board state to a numpy array for post-treatment and stock it in
+        the numpy_board attribute.
+        Black stones are represented by 1, white stones by 2, and empty positions by 0.
+
+        Returns:
+            None
+        """
+        final_board = np.zeros((19, 19), dtype=int)
+        final_board[self.board_detect.get_state()[:, :, 0] == 1] = 1  # 1 for black stones
+        final_board[self.board_detect.get_state()[:, :, 1] == 1] = 2  # 2 for white stones
+           
+        if (self.numpy_board == [] or np.any(final_board != self.numpy_board[-1])):
+            self.numpy_board.append(final_board)
+
+    def transparent_mode_moves(self):
+        """
+        This function retrieves the current state of the board in transparent mode and
+        copies it for pos-treatment.
+
+        Returns:
+            np.array: The current state of the board in transparent mode.
+        """
+
+        self.copyBoardToNumpy()
+        return np.transpose(self.board_detect.get_state(), (1, 0, 2))
+    
     def play_move(self, x, y, stone_color):
         """
         Play a move in the game at the specified position.
@@ -162,48 +220,57 @@ class GoGame:
     def define_new_move(self):
         """
         Define a new move based on the difference between the current game state and the detected state.
-
-        This function compares the current state of the game with the detected state from the board detection module,
-        identifies the new black and white stone positions, and plays moves accordingly in the game.
-
-        Returns:
-            None
         """
-        # Get the detected state from the board detection module
         detected_state = np.transpose(self.board_detect.get_state(), (1, 0, 2))
-
-        # Get the current state of black and white stones in the game
         current_state = self.game.numpy(["black_stones", "white_stones"])
-
-        # Calculate the difference between the detected state and the current state
         difference = detected_state - current_state
 
         # Identify the indices of newly added black and white stones
-        black_stone_indices = np.argwhere(difference[:, :, 0] == 1)
+        black_stone_indices = np.argwhere(difference[:, :, 0] == 1) #positions [x,y] où l'état présent et l'état passé du goban diffèrent pour noir
         white_stone_indices = np.argwhere(difference[:, :, 1] == 1)
+        black_stone_indices_disappeared = np.argwhere(difference[:, :, 0] == -1)
+        white_stone_indices_disappeared = np.argwhere(difference[:, :, 1] == -1)
 
-        # Handle the case where more than one stone was added
+        # Check for more than one stone being added
         if len(black_stone_indices) + len(white_stone_indices) > 1:
-            print("[GoGame Log] - More than one stone was added!")
+            self.process_multiple_moves(black_stone_indices, white_stone_indices)
             return
 
         # Play a move for a newly added black stone
         if len(black_stone_indices) != 0:
+            if len(black_stone_indices)!=0 and len(black_stone_indices_disappeared)!=0: #if one stone has been moved, we adapt the sgf file
+                self.game.step_up()
+                print("A stone has been moved")
             self.play_move(black_stone_indices[0][0] + 1, black_stone_indices[0][1] + 1, 1)  # 1 is black_stone
+            # black_stone_indices[0][0] + 1 : ligne du coup joué, black_stone_indices[0][1] + 1 : colonne du coup joué
+            # On ajoute 1 car il n'y a pas de "zéro-ième" ligne
             self.moves.append(('B', (black_stone_indices[0][0], 18 - black_stone_indices[0][1])))
-            print(f"[GoGame Log] - Black stone was played at ({black_stone_indices[0][0], 18 - black_stone_indices[0][1]})")
-            return
+            self.recent_moves_buffer.append({'color': 'B', 'position': black_stone_indices[0]})
+            self.trim_buffer()
 
         # Play a move for a newly added white stone
         if len(white_stone_indices) != 0:
+            if len(white_stone_indices)==1 and len(white_stone_indices_disappeared)==1:
+                self.game.step_up()
+                print("A stone has been moved")
             self.play_move(white_stone_indices[0][0] + 1, white_stone_indices[0][1] + 1, 2)  # 2 is white_stone
             self.moves.append(('W', (white_stone_indices[0][0], 18 - white_stone_indices[0][1])))
-            print(f"[GoGame Log] - White stone was played at ({white_stone_indices[0][0], 18 - white_stone_indices[0][1]})")
-            return
+            self.recent_moves_buffer.append({'color': 'W', 'position': white_stone_indices[0]})
+            self.trim_buffer()
 
-        # Print a message if no moves were detected
-        print("No new move detected!")
+    def trim_buffer(self):
+        # Ensure buffer size stays within limit
+        if len(self.recent_moves_buffer) > self.buffer_size:
+            self.recent_moves_buffer.pop(0)
 
+    def process_multiple_moves(self, black_stones, white_stones):
+        for stone in black_stones:
+            self.play_move(stone[0] + 1, stone[1] + 1, 1)
+            self.moves.append(('B', (stone[0], 18 - stone[1])))
+
+        for stone in white_stones:
+            self.play_move(stone[0] + 1, stone[1] + 1, 2)
+            self.moves.append(('W', (stone[0], 18 - stone[1])))
     
     def auto_play_game_moves(self):
         """
@@ -319,5 +386,19 @@ class GoGame:
         """
         # Use the sente.sgf.dumps function to convert the game to SGF format
         return sente.sgf.dumps(self.game)
+    
+    def post_treatment(self, endGame):
+        """
+        Post-treatment of the game to correct the sequence of moves.
+        Use AI and/or algorithms to correct the detection errors.
+
+        Returns:
+            str: The SGF representation of the corrected game.
+        """
+        if endGame:
+            liste_coups = correctorAI(self.numpy_board)
+            return to_sgf(liste_coups)
 
 
+
+# %%

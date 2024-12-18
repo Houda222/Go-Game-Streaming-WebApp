@@ -3,18 +3,20 @@
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename = 'styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename = 'loader.css') }}">
     <!--<script  rel="stylesheet" type="text/css" src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>    <meta charset="UTF-8">-->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
-    <script src="static/game_manager.js"></script>
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partie en cours</title>
 </head>
 <body>
-    </br>
 
+    <div id="loader">
+        <div class="spinner"></div>
+    </div> 
+
+    <div id="content">
     <div class="container-fluid col overflow-auto max-vh-100">
 
         </br>
@@ -124,6 +126,7 @@
             </div>
         </div>
     </div>
+</div>
 
     <script>
         function downloadFile() {
@@ -142,6 +145,59 @@
             xhr.send();
         }
     </script>
+
+
+<script>
+    function hideLoader() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+    }
+
+    function checkImagesLoaded() {
+        const images = document.querySelectorAll('img');
+        let totalImages = images.length;
+        let imagesLoaded = 0;
+
+        images.forEach((image) => {
+            if (image.complete && image.naturalHeight !== 0) {
+                // L'image est déjà chargée
+                imagesLoaded++;
+            } else {
+                // Ajouter des écouteurs sur chaque image pour être averti lorsqu'elle est chargée
+                image.addEventListener('load', () => {
+                    imagesLoaded++;
+                    if (imagesLoaded === totalImages) {
+                        hideLoader();
+                    }
+                });
+
+                // Si une image ne se charge pas correctement
+                image.addEventListener('error', () => {
+                    imagesLoaded++; // Compter l'image même en cas d'erreur
+                    if (imagesLoaded === totalImages) {
+                        hideLoader();
+                    }
+                });
+            }
+        });
+
+        // Vérifier si toutes les images sont déjà chargées
+        if (imagesLoaded === totalImages) {
+            hideLoader();
+        }
+    }
+
+    // Observer les modifications du DOM (utile pour les images générées dynamiquement)
+    const observer = new MutationObserver(() => {
+        checkImagesLoaded();
+    });
+
+    observer.observe(document.getElementById('content'), { childList: true, subtree: true });
+
+    // Appeler la fonction une fois le chargement du contenu terminé
+    window.addEventListener('load', checkImagesLoaded);
+</script>
+
 
 <!-- </div>  
     <div class="container-sm">

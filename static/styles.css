@@ -26,7 +26,7 @@ body {
   position: absolute; /* Position absolue pour placer le logo */
   top: 10px; /* Distance depuis le haut en pixels */
   left: 10px; /* Distance depuis la gauche en pixels */
-}
+  }
 
 .logo {
   width: 80%;
@@ -76,13 +76,20 @@ body {
   text-decoration: none; /* Remove underlines from links */
   display: block; /* Make it a block element */
   max-width:600px; /* Set a maximum width for the buttons */
-
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .btn-grand a {
   color: #000000; /* Set the color of the links */
   text-decoration: none; /* Remove underlines from links */
 }
+
+
+.btn-grand:hover {
+  background-color: #b39968;
+  transform: scale(1.05);
+}
+
 
 .btn-sommaire{
   font-size: 48px;

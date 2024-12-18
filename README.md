@@ -4,20 +4,25 @@
 
 <h3>Developed with the software and tools below</h3>
 <p align="center">
-    <img src="https://img.shields.io/badge/Jupyter-F37626.svg?style=flat-square&logo=Jupyter&logoColor=white" alt="Jupyter" />
-    <img src="https://img.shields.io/badge/opencv--python-4.8.1.78-blue?style=flat-square&logo=opencv" alt="opencv-python" />
-    <img src="https://img.shields.io/badge/scikit--learn-1.3.2-orange?style=flat-square&logo=scikit-learn" alt="scikit-learn" />
+    <img src="https://img.shields.io/badge/TensorFlow-2.17.0-FF6F00?style=flat-square&logo=TensorFlow&logoColor=white" alt="TensorFlow" />
+    <img src="https://img.shields.io/badge/Flask-3.1.0-000000?style=flat-square&logo=Flask&logoColor=white" alt="Flask" />
+    <img src="https://img.shields.io/badge/numpy-<2-013243?style=flat-square&logo=numpy&logoColor=white" alt="numpy" />
+    <img src="https://img.shields.io/badge/opencv--contrib--python-4.8.1.78-blue?style=flat-square&logo=opencv" alt="opencv-contrib-python" />
+    <img src="https://img.shields.io/badge/opencv--python-4.10.0.84-blue?style=flat-square&logo=opencv" alt="opencv-python" />
+    <img src="https://img.shields.io/badge/opencv--python--headless-4.10.0.84-blue?style=flat-square&logo=opencv" alt="opencv-python-headless" />
+    <img src="https://img.shields.io/badge/scikit--learn-1.6.0-orange?style=flat-square&logo=scikit-learn" alt="scikit-learn" />
     <img src="https://img.shields.io/badge/sente-0.4.2-yellow?style=flat-square&logoColor=white" alt="sente" />
-    <img src="https://img.shields.io/badge/ultralytics-8.0.231-brightgreen?style=flat-square&logoColor=white" alt="ultralytics" />
+    <img src="https://img.shields.io/badge/sgf-0.5-yellow?style=flat-square&logoColor=white" alt="sgf" />
+    <img src="https://img.shields.io/badge/ultralytics-8.0.206-brightgreen?style=flat-square&logoColor=white" alt="ultralytics" />
 </p>
 </div>
 
 ---
 
 ## Table of Contents
-- [Overview](#overview)
+- [Overview Year 1](#-overview-year-1)
+- [Overview Year 2](#-overview-year-2)
 - [Repository Structure](#repository-structure)
-- [Modules](#modules)
 - [Getting Started](#getting-started)
     - [Installation](#installation)
     - [Running GoGame-Detection](#running-gogame-detection)
@@ -28,7 +33,7 @@
 ---
 
 
-## 📍 Overview
+## 📍 Overview Year 1
 
 This project is a part of the engineering curriculum in the french engineering school IMT Atlantique (Brest), specifically "UE Projet Commande Entreprise".
 It is dedicated to the development of a program capable of recognizing a game board, its stones and their respective positions within a go game context from a video stream.
@@ -42,53 +47,54 @@ Key Highlights:
 - .
 - **Intuitive Visualization:** An interactive user interface has been developed on the base of this project. The interface takes the form of a website which works only locally.
 
+## 📍 Overview Year 2
+
+In Year 2, the GoGame-Detection project was enhanced by adding new features to improve reliability, accuracy, and autonomy. We focused on refining the detection process and introducing a post-treatment phase to correct errors after the game ends.
+
+Key Highlights:
+- **Transparent Mode:**
+Introduced an updated transparent mode for real-time game board detection without blocking rules.
+
+- **Post-treatment Algorithms and AI:**
+Added AI-based post-treatment functions to automatically correct detection errors after the game, improving the system’s autonomy and accuracy (Post_treatment_AI)
+Added also algorithm-base and hybrid-based post-treatment functions
+(Post_treatment_Algo)
 
 ---
 
 ## 📂 Repository Structure
 
 ```sh
-└── GoGame-Detection/
-    ├── GoBoard.py
-    ├── GoGame.py
-    ├── GoVisual.py
-    ├── Notebboks to explain detection/
-    │   ├── Algorithmic approach to detect a go board.ipynb
-    │   └── Go_board_detection.ipynb
-    ├── UML/
-    ├── main.py
-    ├── model.pt
-    ├── requirements.txt
-    └── utils_.py
+
+├── Annex
+├── Go-Game-Streaming-WebApp-main
+├── GoBoard.py
+├── GoGame.py
+├── GoVisual.py
+├── Historique_test_js.html
+├── Post_treatment_AI
+│   ├── Code
+│   │   ├── Fill_gaps_model.py
+│   │   └── modelCNN.keras
+│   ├── Notebook Model.ipynb
+│   └── Test
+├── Post_treatment_Algo
+│   ├── Code
+│   │   ├── corrector_noAI.py
+│   │   ├── corrector_withAI.py
+│   │   └── sgf_to_numpy.py
+│   └── Test
+├── README.md
+├── empty_board.jpg
+├── historiquejs.js
+├── main.py
+├── model.pt
+├── recup_os.py
+├── requirements.txt
+├── static
+└── utils_.py
 
 ```
-
----
-
-
-## ⚙️ Modules
-
-<summary>Root</summary>
-
-| File                                                                                                          | Summary                   |
-| ---                                                                                                           | ---                       |
-| [requirements.txt](https://github.com/GoGame-Recognition-Project/GoGame-Detection/blob/main/requirements.txt) | Dependencies for the project |
-| [main.py](https://github.com/GoGame-Recognition-Project/GoGame-Detection/blob/main/main.py)                   | Main script to run GoGame-Detection |
-| [GoGame.py](https://github.com/GoGame-Recognition-Project/GoGame-Detection/blob/main/GoGame.py)               | Class for managing the Go game |
-| [GoVisual.py](https://github.com/GoGame-Recognition-Project/GoGame-Detection/blob/main/GoVisual.py)           | Class for visual representation of the Go game |
-| [GoBoard.py](https://github.com/GoGame-Recognition-Project/GoGame-Detection/blob/main/GoBoard.py)             | Class for detecting the board in its current position |
-| [utils_.py](https://github.com/GoGame-Recognition-Project/GoGame-Detection/blob/main/utils_.py)               | Utility functions used in GoBoard class |
-| [model.pt](https://github.com/GoGame-Recognition-Project/GoGame-Detection/blob/main/model.pt))                | Trained machine learning model file. |
-
-
-
-<summary>Notebboks to explain detection</summary>
-
-| File                               | Summary                   |
-| ---                                | ---                       |
-| [Go_board_detection.ipynb](https://github.com/GoGame-Recognition-Project/GoGame-Detection/blob/main/Notebooks_to_explain_detection/Go_board_detection.ipynb)                                                    | Notebook explaining the Go board detection algorithm used in the project |
-| [Algorithmic approach to detect a go board.ipynb](https://github.com/GoGame-Recognition-Project/GoGame-Detection/blob/main/Notebooks_to_explain_detection/Algorithmic_approach_to_detect_a_go_board.ipynb) | Notebook detailing the algorithmic approach for Go board detection |
-
 
 ---
 
@@ -96,19 +102,36 @@ Key Highlights:
 
 ***Dependencies***
 
+The code is runnable under Python3.10 (and not more recent versions for now).
 Please ensure you have the following dependencies installed on your system:
 
-ℹ️ [opencv-python](https://pypi.org/project/opencv-python/) (version 4.8.1.78)
+ℹ️ [TensorFlow](https://pypi.org/project/tensorflow/) (version 2.17.0)
 
-ℹ️ [scikit-learn](https://scikit-learn.org/stable/install.html) (version 1.3.2)
+ℹ️ [Flask](https://pypi.org/project/Flask/) (version 3.1.0)
+
+ℹ️ [numpy](https://pypi.org/project/numpy/) (version <2)
+
+ℹ️ [opencv-contrib-python](https://pypi.org/project/opencv-contrib-python/) (version 4.8.1.78)
+
+ℹ️ [opencv-python](https://pypi.org/project/opencv-python/) (version 4.10.0.84)
+
+ℹ️ [opencv-python-headless](https://pypi.org/project/opencv-python-headless/) (version 4.10.0.84)
+
+ℹ️ [scikit-learn](https://scikit-learn.org/stable/install.html) (version 1.6.0)
 
 ℹ️ [sente](https://pypi.org/project/sente/) (version 0.4.2)
 
-ℹ️ [ultralytics](https://pypi.org/project/ultralytics/) (version 8.0.231)
+ℹ️ [sgf](https://pypi.org/project/sgf/) (version 0.5)
+
+ℹ️ [ultralytics](https://pypi.org/project/ultralytics/) (version 8.0.206)
 
 ### 🔧 Installation
 
-1. Clone the GoGame-Detection repository:
+- **Cloning the Repositories:**
+
+If you are working with **GoGame-Detection** repository:
+
+1. Clone the **GoGame-Detection** repository:
 ```sh
 git clone https://github.com/GoGame-Recognition-Project/GoGame-Detection.git
 ```
@@ -116,7 +139,20 @@ git clone https://github.com/GoGame-Recognition-Project/GoGame-Detection.git
 2. Change to the project directory:
 ```sh
 cd GoGame-Detection
+```    
+
+If you are working with **TenukiGo** repository:
+
+1. Clone the **TenukiGo** repository:
+```sh
+git clone https://github.com/Borishkof/TenukiGo.git
 ```
+
+2. Change to the project directory:
+```sh
+cd TenukiGo
+```    
+
 
 3. Install the dependencies:
 ```sh
@@ -127,7 +163,7 @@ pip install -r requirements.txt
 ### 🤖 Running the script
 
 ```sh
-python run.py
+python main.py
 ```
 
 ---
