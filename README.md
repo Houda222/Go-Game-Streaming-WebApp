@@ -37,15 +37,15 @@
 
 This project is a part of the engineering curriculum in the french engineering school IMT Atlantique (Brest), specifically "UE Projet Commande Entreprise".
 It is dedicated to the development of a program capable of recognizing a game board, its stones and their respective positions within a go game context from a video stream.
-The primary problem that our project tackles is the detection of the game setup at different angles without the need to set the camera at a fixed configuration. This capability allows for flexibility in changing the camera's angle or position, as well as adjusting the game board's placement during the course of the game. This stands as a distinctive feature compared to many existing solutions.
+The primary problem that our project tackles is the detection of the game setup at different angles without the need to set the camera at a fixed configuration. This capability allows for flexibility in changing the camera's angle or position, as well as adjusting the game board's placement during the course of the game. This stands as a distinctive feature compared to many existing solutions. The solution is in the form of a simple web application developed with Flask.
 
 
 Key Highlights:
-- **Real-time Game recognition:** Capable of detecting key components of a go game using a custom trained `Yolov8` model.
-- **Game management:** Capable of streaming and visually reproducing a Go game with or without respecting the Go game rules.
-- **SGF:** Capable of saving an SGF file of the streamed game for later use. 
-- .
-- **Intuitive Visualization:** An interactive user interface has been developed on the base of this project. The interface takes the form of a website which works only locally.
+- **Real-time board recognition:** Capable of detecting key components of a go game using a custom trained `Yolov8` model.
+- **Board state:** Capable of accurately positioning white and black stones using post processing techniques.
+- **Game management:** Capable of managing a game with or without respecting the Go game rules.
+- **SGF:**  Capable of visually reproducing a game and saving an SGF file of the streamed game for later use. 
+- **Intuitive Visualization:** An interactive user interface displaying the streamed game has been developed on the base of this project. The interface takes the form of a website.
 
 ## 📍 Overview Year 2
 
