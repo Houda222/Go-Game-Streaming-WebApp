@@ -5,6 +5,8 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename = 'styles.css') }}">
     <!--<script  rel="stylesheet" type="text/css" src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>    <meta charset="UTF-8">-->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <meta charset="UTF-8">
 
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,6 +64,13 @@
                     <div class="col-1"></div>
                 </div>
             </div>
+
+            <div class="col">
+                <b>Générer le fichier SGF de la partie</b>
+                </br>
+                <button class="btn bg custom-button btn-petit" onclick="downloadFile()">Télécharger</button>
+            </div>
+
             <div class="col text-info">
                 <div id="message">
                     {{ message }}
@@ -89,14 +98,14 @@
         function downloadFile() {
             // Requête AJAX pour obtenir le contenu du fichier depuis le serveur
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/get_file_content', true);
+            xhr.open('GET', '/get_sgf_txt', true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     // Créer un blob avec le contenu du fichier
                     var blob = new Blob([xhr.responseText], { type: 'text/plain' });
                     
                     // Utiliser FileSaver.js pour télécharger le fichier
-                    saveAs(blob, 'nom_du_fichier.sgf');
+                    saveAs(blob, 'partie.sgf');
                 }
             };
             xhr.send();

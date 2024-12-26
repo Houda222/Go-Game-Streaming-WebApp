@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename = 'styles.css') }}">
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename = 'styles.css') }}">-->
+    <link rel="stylesheet" type="text/css" href ="{{ url_for('static',filename = 'HomeStyle.css') }}" >
     <!--<script  rel="stylesheet" type="text/css" src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>    <meta charset="UTF-8">-->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
  
@@ -11,29 +12,29 @@
     <title>Home</title>
 </head>
 <body>
-<div class="container-fluid text-center bg custom-color">
-    <div class="container-fluid text-center">
-        <div class="row">
-            <div class="col-5 custom-color">        
-                <a href="{{ url_for('credit') }}"><button class = "btn bg custom-button btn-grand">Credits</button></a>
-            </div>
-            <div class="container-2 text-center col custom-color custom-size">
-                <b>Association Tanuki</b>
-            </div>
-            <div class="col-5 custom-color">        
-                <img src="{{ url_for('static', filename='Logo_Tanuki_gris.png') }}" class="logo logo-Tenuki" alt="Logo de l'association" id="logo">
-            </div>
-        </div>
-    </div>
-    </br>
-    </br>
-    </br>
+  
+    <!-- Header qui reste en haut de la page avec l'image centrée -->
+    <header>
+        <img src="{{ url_for('static', filename='Logo_Tanuki_gris.png') }}" class="logo" alt="Logo de l'association">
+    </header>
+
+    <!-- Contenu principal avec les boutons centrés verticalement et horizontalement -->
+    <main>
         <div class="button-container">
-            <div class="btn bg custom-button btn-grand"><a href="{{ url_for('partie') }}"><b>Mode Partie</b></a></div>
-            <div class="btn bg custom-button btn-grand"><a href="{{ url_for('transparent') }}"><b>Mode Transparent</b></a></div>
-            <div class="btn bg custom-button btn-grand"><a href="{{ url_for('historique') }}"><b>Historique des parties</b></a></div>
-            <div class="btn bg custom-button btn-grand"><a href="{{ url_for('sgf') }}"><b>Lire SGF</b></a></div>
+            <div class="btn"><a href="{{ url_for('partie') }}"><b>Mode Partie</b></a></div>
+            <div class="btn"><a href="{{ url_for('transparent') }}"><b>Mode Transparent</b></a></div>
+            <div class="btn"><a href="{{ url_for('historique') }}"><b>Historique des parties</b></a></div>
+            <div class="btn"><a href="{{ url_for('sgf') }}"><b>Lire SGF</b></a></div>
         </div>
+    </main>
+
+    <!-- Footer qui reste en bas de la page -->
+    <footer>
+        <div class="btn-credit"><a href="{{ url_for('credit') }}"><b>Crédits</b></a></div>
+    </footer>
+
+
+</div>
 </body>
 </html>
 

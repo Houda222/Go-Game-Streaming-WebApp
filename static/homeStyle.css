@@ -1,0 +1,92 @@
+/* Appliquer à tout le document */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(81, 81, 79, 1);
+}
+
+/* Header en haut de la page */
+header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Ajuster la taille de l'image dans le header */
+header img {
+    max-width: 300px; /* Limiter la taille maximale de l'image */
+    height: auto; /* Conserver le ratio d'aspect */
+}
+
+/* Main qui occupe l'espace entre header et footer */
+main {
+    flex: 1; /* Prend tout l'espace disponible entre le header et le footer */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centre verticalement et horizontalement */
+}
+
+/* Conteneur de boutons centré */
+.button-container {
+    text-align: center;
+    width: 100%;
+}
+
+/* Boutons avec marges uniformes */
+.btn {
+    font-size: 30px;
+    padding: 15px 30px;
+    background-color: #ecce97;
+    border-radius: 20px;
+    color: #000000;
+    margin: 20px 0; /* Espace vertical entre les boutons */
+    text-decoration: none;
+    display: block;
+    width: 50%;
+    max-width: 400px; /* Limite de taille des boutons */
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Effet au survol des boutons */
+.btn:hover {
+    background-color: #b39968;
+    transform: scale(1.05);
+}
+
+/* Footer fixé en bas de la page */
+footer {
+    width: 100%;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+footer .btn-credit {
+    font-size: 20px;
+    border-radius: 20px;
+    padding: 10px 20px;
+    background-color: #ecce97;
+    color: #000000;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+footer .btn-credit:hover {
+    background-color: #b39968;
+    transform: scale(1.05);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}

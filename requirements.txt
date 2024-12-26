@@ -1,6 +1,11 @@
-Flask==3.0.0
-opencv-contrib-python==4.8.1.78
-opencv-python==4.8.1.78
+tensorflow==2.17.0
+Flask==3.1.0
+numpy<2
+opencv_contrib_python==4.8.1.78
+opencv_python==4.10.0.84
+opencv_python_headless==4.10.0.84
+scikit_learn==1.6.0
 sente==0.4.2
-sgfmill==1.1.1
+sgf==0.5
 ultralytics==8.0.206
+
