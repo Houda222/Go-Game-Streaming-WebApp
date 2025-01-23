@@ -4,10 +4,11 @@ from ultralytics import YOLO
 from GoGame import *
 from GoBoard import *
 from GoVisual import *
-from flask import Flask, render_template, Response, request
+from flask import Flask, render_template, Response, request, flash,redirect, url_for
 import cv2
 import base64
 import time
+import os
 
 import recup_os
 
@@ -404,6 +405,76 @@ def transparent():
     
     transparent_mode = False
     return render_template("transparent.html")
+   
+@app.route('/modePhoto')
+def modePhoto():
+    """
+        Route to get to the streaming page in photo mode
+        """
+    return render_template("photo.html")
+
+app.config['UPLOAD_FOLDER'] = 'uploads'  # Dossier pour enregistrer les fichiers
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Taille maximale des fichiers (16 Mo)
+
+# Vérifiez que le dossier d'upload existe, sinon, créez-le
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+UPLOAD_FOLDER = 'uploads'
+
+def delete_uploaded_files():
+    """Supprime tous les fichiers du dossier UPLOAD_FOLDER."""
+    print("on commence à delete")
+    try:
+        # Lister tous les fichiers dans le dossier
+        files = os.listdir(UPLOAD_FOLDER)
+        print(files)
+        for file in files:
+            file_path = os.path.join(UPLOAD_FOLDER, file)
+            if os.path.isfile(file_path):  # Vérifie si c'est un fichier
+                os.remove(file_path)  # Supprime le fichier
+                print(f"Fichier supprimé : {file_path}")
+    except Exception as e:
+        print(f"Erreur lors de la suppression des fichiers : {e}")
+
+@app.route('/uploadImg', methods=['POST'])
+def upload_files():
+
+    print("On entre dans la logique")
+    
+
+    if 'images' not in request.files:
+        flash('Aucun fichier sélectionné')
+        return redirect(request.url)
+
+    files = request.files.getlist('images')  # Récupère tous les fichiers envoyés
+
+    uploaded_files = []
+    for file in files:
+        if file.filename == '':
+            flash('Un fichier n’a pas de nom')
+            continue
+
+        # Sauvegarder le fichier sur le serveur
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(file_path)
+        uploaded_files.append(file_path)
+
+    # Appelez votre fonction Python avec la liste des fichiers téléversés
+    process_uploaded_files(uploaded_files)
+
+    flash(f'{len(uploaded_files)} fichier(s) téléversé(s) avec succès.')
+    return redirect(url_for('modePhoto'))  # Redirige vers la page d’accueil ou une autre page
+
+def process_uploaded_files(file_paths):
+    """
+    Fonction pour traiter les fichiers téléversés.
+    - file_paths : Liste des chemins des fichiers enregistrés.
+    """
+    print(file_paths)
+    for file_path in file_paths:
+        print(f"Traitement du fichier : {file_path}")
+        # Ajoutez votre logique ici : analyse, conversion, etc.
+    
+    delete_uploaded_files()
 
 @app.route('/sgf')
 def sgf():
