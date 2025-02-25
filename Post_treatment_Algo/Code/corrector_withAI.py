@@ -53,3 +53,33 @@ def correctorAI(liste_tableaux):
                     break
           
     return liste_coups
+
+    
+
+
+
+                
+
+   
+
+            
+            
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mode Photo</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='photoStyle.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='Logo_Tanuki_gris.png') }}" class="logo" alt="Logo de l'association">
+    </header>
+
+    <main>
+        <div class="upload-box">
+            <h2>Déposer vos fichiers</h2>
+            <form method="POST" action="/uploadImg" enctype="multipart/form-data">
+                <input type="file" name="images" multiple>
+                <br>
+                <button class="btn" type="submit">Téléverser</button>
+            </form>
+        </div>
+
+        <div class="download-section">
+            <h2>Générer le fichier SGF de la partie</h2>
+            <button class="btn" onclick="downloadFile()">Télécharger le SGF</button>
+        </div>
+    </main>
+
+    <footer>
+        <a class="btn" href="{{ url_for('home') }}">Retour</a>
+    </footer>
+
+    <script>
+        function downloadFile() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/get_sgf_txt', true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var blob = new Blob([xhr.responseText], { type: 'text/plain' });
+                    saveAs(blob, 'partie.sgf');
+                }
+            };
+            xhr.send();
+        }
+    </script>
+</body>
+</html>

@@ -42,6 +42,18 @@ class GoBoard:
         self.state = None
         self.padding = 30
         
+    def state_to_array(self):
+        if self.state is None:
+            raise ValueError("The board state is not set. Process a frame first.")
+
+        # Create a 2D array with the same shape as the board (19x19)
+        board_array = np.zeros((19, 19), dtype=int)
+
+        # Assign 1 for black stones and 2 for white stones
+        board_array[self.state[:, :, 0] == 1] = 1
+        board_array[self.state[:, :, 1] == 1] = 2
+
+        return board_array
         
     def get_state(self):
         """

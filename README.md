@@ -60,6 +60,10 @@ Added AI-based post-treatment functions to automatically correct detection error
 Added also algorithm-base and hybrid-based post-treatment functions
 (Post_treatment_Algo)
 
+- **Photo Mode:**
+In this mode drop two photos of a game in the good order to get a SGF representing a reconstruction of
+the game provided by our AI model.
+
 ---
 
 ## 📂 Repository Structure
@@ -70,6 +74,7 @@ Added also algorithm-base and hybrid-based post-treatment functions
 ├── Go-Game-Streaming-WebApp-main
 ├── GoBoard.py
 ├── GoGame.py
+├── GoPhoto.py
 ├── GoVisual.py
 ├── Historique_test_js.html
 ├── Post_treatment_AI
